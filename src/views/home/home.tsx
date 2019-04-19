@@ -9,7 +9,7 @@ const Home = () => {
     return (
         <React.Fragment>
             <div className='container Home' style={{backgroundColor : '#005360'}}>
-                <Card className='card' style={{ width: '95%', maxWidth: '25rem', margin : 'auto auto' }}>
+                <Card className='card' style={{ width: '95%', maxWidth: '28rem', margin : 'auto auto' }}>
                     <Card.Header>ETIC INSA Technologies</Card.Header>
                     <Card.Body style={{textAlign: 'center'}}>
                         <Card.Title>Inscription</Card.Title>

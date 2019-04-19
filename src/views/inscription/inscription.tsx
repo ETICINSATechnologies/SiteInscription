@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import './inscription.css';
 import Modal from "../../components/Modal/Modal";
-import { Member, defaultMember } from "../../model/Member";
-import { Consultant, defaultConsultant } from "../../model/Consultant";
+import { Member, defaultMember, MemberInterface } from "../../model/Member";
+import { Consultant, defaultConsultant, ConsultantInterface } from "../../model/Consultant";
 import { Person } from "../../model/Person";
 import { Card, Button, Form } from "react-bootstrap";
 import { Department } from '../../model/Department';
@@ -40,64 +40,56 @@ const Inscription = (props: InscriptionProps) => {
         countries: []
     } as MetaInfo);
 
+    // you added IF to test, remove it later
     useEffect(() => {
+        let departmentsTemp:Department[];
+        let polesTemp:Pole[];
+        let countriesTemp:Country[];
+        /* find a fucking better way to do this */
         // get departments
         fetch('core/department', {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json'
-            },
+            method: 'GET'
         })
             .then(res => {
                 if (res.status == 200) {
                     res.json()
                         .then(result => {
-                            setMetaInfo({
-                                ...metaInfo,
-                                departments: result
+                            departmentsTemp = result
+                            departmentsTemp.push({id: 2, label :'IF' ,name :'Informatique'})
+                            // get countries
+                            fetch('core/country', {
+                                method: 'GET'
                             })
-                        }
-                        )
-                }
-            }
-            )
+                                .then(res => {
+                                    if (res.status == 200) {
+                                        res.json()
+                                            .then(result => {
+                                                countriesTemp = result
+                                                // get poles
+                                                fetch('core/pole', {
+                                                    method: 'GET'
+                                                })
+                                                    .then(res => {
+                                                        if (res.status == 200) {
+                                                            res.json()
+                                                                .then(result => {
+                                                                    polesTemp = result
+                                                                    setMetaInfo({
+                                                                        poles : polesTemp,
+                                                                        departments : departmentsTemp,
+                                                                        countries : countriesTemp
+                                                                    })
+                                                                }
+                                                                )
+                                                        }
+                                                    }
+                                                    )
+                                            }
+                                            )
+                                    }
+                                }
+                                )
 
-        // get countries
-        fetch('core/country', {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-        })
-            .then(res => {
-                if (res.status == 200) {
-                    res.json()
-                        .then(result => {
-                            setMetaInfo({
-                                ...metaInfo,
-                                countries: result
-                            })
-                        }
-                        )
-                }
-            }
-            )
-
-        // get poles
-        fetch('core/pole', {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-        })
-            .then(res => {
-                if (res.status == 200) {
-                    res.json()
-                        .then(result => {
-                            setMetaInfo({
-                                ...metaInfo,
-                                poles: result
-                            })
                         }
                         )
                 }
@@ -106,56 +98,37 @@ const Inscription = (props: InscriptionProps) => {
 
     }, []);
 
-    const onSubmit = () => {
-        // compose our own form data
-        let form_data = new FormData();
+    const handleSubmit = (event : React.FormEvent) => {
+        event.preventDefault();
+        console.log(state.person);
+        console.log('submitted');
+        let form_data : FormData;
 
-        for (let key in state.person) {
-            // console.log(key + ' : ' + (state.person[key]));
-            form_data.append(key, state.person[key]);
-        }
+        form_data  = state.person.getFormData();
+    };
 
-        if (props.isConsultant) {
-            fetch('sg/consultant-inscription', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'multipart/form-data'
-                },
-
-                body: form_data
+    const onChange = (event: React.ChangeEvent) => {
+        event.persist();
+        let property : string=event.target.className.split(" ")[0];
+        let value=(event.target as HTMLFormElement).value;
+        if (state.person.hasOwnProperty(property)) {
+            setState({
+                ... state,
+                person : {
+                    ...state.person,
+                    [property] : value,
+                }
             })
-                .then(res => {
-                    if (res.status === 201) {
-                        console.log('success');
-                        showModal();
-                    } else {
-
-                    }
-                });
-        } else {
-            fetch('sg/membre-inscription', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'multipart/form-data'
-                },
-
-                body: form_data
-            })
-                .then(res => {
-                    if (res.status === 201) {
-                        console.log('success');
-                        res.json()
-                            .then(result => {
-                                console.log(result);
-                            })
-                    } else {
-                        alert('Veuillez-verifier vos informations');
-                    }
-                });
         }
+    };
 
-        // payment();
-
+    const onChangeDropDown = (event: React.ChangeEvent) => {
+        event.persist();
+        let property : string=event.target.className.split(" ")[0];
+        let value=(event.target as HTMLFormElement).value;
+        if (state.person.hasOwnProperty(property)) {
+        }
+        console.log(value);
     };
 
     const showModal = () => {
@@ -163,6 +136,7 @@ const Inscription = (props: InscriptionProps) => {
             ...state,
             showModal: !state.showModal,
         })
+    
     }
 
     const payment = () => {
@@ -180,37 +154,57 @@ const Inscription = (props: InscriptionProps) => {
         });
     }
 
-    let getOptions = (objectArray: any[]) => objectArray.map((option: any, index: any) => {
+    const makeOptions = (objectArray: any[]) => objectArray.map((option: any, index: any) => {
         return <option key={index} value={option.id}>{option.label}</option>
     });
+
+    const makeYears = () => {
+        //make array
+        let dt = new Date();
+        let years : number[] = [dt.getFullYear()];
+        for (let i=1;i<6;++i) years.push(dt.getFullYear()+i);
+        
+        //make options
+        let yearList = () => years.map((option: number, index: any) => {
+            return <option key={index} value={option}>{option}</option>
+        })
+
+        return yearList();
+    }
 
     return (
         <React.Fragment>
             <div className='container Inscription' style={{ backgroundColor: '#005360' }}>
-                <Card className='card' style={{ width: '95%', maxWidth: '25rem', margin: 'auto auto' }}>
-                    <Card.Header>ETIC INSA Technologies</Card.Header>
-                    <Card.Body style={{ textAlign: 'center' }}>
-                        <Card.Title>{props.isConsultant ? 'Inscription Consultant' : 'Inscription Membre'}</Card.Title>
-                        <Form>
+                <Card className='card' style={{ width: '100%', maxWidth: '28rem', margin: '1rem auto' }}>
+                    <Card.Header style={{ textAlign: 'center' }}>ETIC INSA Technologies</Card.Header>
+                    <Card.Body>
+                        <Card.Title style={{ textAlign: 'center' }}>{props.isConsultant ? 'Inscription Consultant' : 'Inscription Membre'}</Card.Title>
+                        <Form onSubmit={handleSubmit}>
                             <Form.Group controlId='firstName'>
                                 <Form.Label>Prénom</Form.Label>
-                                <Form.Control type='text' placeholder="Denys" required
-                                    maxLength={20} />
+                                <Form.Control className='firstName' type='text' placeholder="Denys" required
+                                    maxLength={20} onChange={onChange as any} />
                             </Form.Group>
                             <Form.Group controlId="lastName">
                                 <Form.Label>Nom de famille</Form.Label>
-                                <Form.Control type="text" placeholder="Chomel" required
-                                    maxLength={20} />
+                                <Form.Control className='lastName' type="text" placeholder="Chomel" required
+                                    maxLength={20} onChange={onChange as any} />
                             </Form.Group>
                             <Form.Group controlId="phoneNumber">
                                 <Form.Label>Téléphone</Form.Label>
-                                <Form.Control type="tel" placeholder="0612345678" required
-                                    pattern='[0]{1}[0-9]{9}' />
+                                <Form.Control className='phoneNumber' type="tel" placeholder="0612345678"
+                                    pattern='[0]{1}[0-9]{9}' onChange={onChange as any}/>
                             </Form.Group>
-                            <Form.Group controlId="department">
-                                <Form.Label>Department</Form.Label>
-                                <Form.Control as="select" required>
-                                    {getOptions(metaInfo.departments)};
+                            <Form.Group controlId="departmentId">
+                                <Form.Label>Departement</Form.Label>
+                                <Form.Control className='departmentId' as="select" onChange={onChange as any} required>
+                                    {makeOptions(metaInfo.departments)};
+                                </Form.Control>
+                            </Form.Group>
+                            <Form.Group controlId="outYear">
+                                <Form.Label>Année de sortie</Form.Label>
+                                <Form.Control className='outYear' as="select" onChange={onChange as any}>
+                                    {makeYears()}
                                 </Form.Control>
                             </Form.Group>
                             {props.isConsultant ?
@@ -223,9 +217,11 @@ const Inscription = (props: InscriptionProps) => {
                                 // all member specific fields here
                                 null
                             }
-                            <Button variant="primary" type="submit">
-                                {props.isConsultant ? 'Valider' : 'Valider et Payer'}
-                            </Button>
+                            <div className="text-center"> 
+                                <Button variant="primary" type='submit'>
+                                    {props.isConsultant ? 'Valider' : 'Valider et Payer'}
+                                </Button>
+                            </div>
                         </Form>
                     </Card.Body>
                 </Card>
