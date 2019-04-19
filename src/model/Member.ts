@@ -41,25 +41,25 @@ export class Member implements MemberInterface {
         {memberInterface.line2? this.line2 = memberInterface.line2 : null}
     }
 
-    getFormData = () => {
+    getFormData = (memberInterface: MemberInterface) => {
         let retMember : MemberUpdate = {
-            firstName : this.firstName,
-            lastName : this.lastName,
-            departmentId : this.departmentId,
-            email : this.email,
-            nationalityId : this.nationalityId,
-            wantedPoleId : this.wantedPoleId,
+            firstName : memberInterface.firstName,
+            lastName : memberInterface.lastName,
+            departmentId : memberInterface.departmentId,
+            email : memberInterface.email,
+            nationalityId : memberInterface.nationalityId,
+            wantedPoleId : memberInterface.wantedPoleId,
             address : {
-                line1 : this.line1,
-                city : this.city,
-                postalCode : this.postalCode,
-                countryId : this.countryId,
+                line1 : memberInterface.line1,
+                city : memberInterface.city,
+                postalCode : memberInterface.postalCode,
+                countryId : memberInterface.countryId,
             }
         } as MemberUpdate;
 
-        this.phoneNumber? retMember.phoneNumber = this.phoneNumber : null;
-        this.outYear? retMember.outYear = this.outYear : null;
-        this.line2? retMember.address.line2 = this.line2 : null;
+        memberInterface.phoneNumber? retMember.phoneNumber = memberInterface.phoneNumber : null;
+        memberInterface.outYear? retMember.outYear = memberInterface.outYear : null;
+        memberInterface.line2? retMember.address.line2 = memberInterface.line2 : null;
 
         let form_data = new FormData();
         for (let key in retMember) {

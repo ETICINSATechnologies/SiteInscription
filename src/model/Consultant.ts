@@ -56,24 +56,24 @@ export class Consultant implements ConsultantInterface {
         {consultantInterface.line2? this.line2 = consultantInterface.line2 : null}
     }
 
-    getFormData = () => {
+    getFormData = (consultantInterface: ConsultantInterface) => {
         let retConsultant : ConsultantUpdate = {
-            firstName : this.firstName,
-            lastName : this.lastName,
-            departmentId : this.departmentId,
-            email : this.email,
-            nationalityId : this.nationalityId,
+            firstName : consultantInterface.firstName,
+            lastName : consultantInterface.lastName,
+            departmentId : consultantInterface.departmentId,
+            email : consultantInterface.email,
+            nationalityId : consultantInterface.nationalityId,
             address : {
-                line1 : this.line1,
-                city : this.city,
-                postalCode : this.postalCode,
-                countryId : this.countryId,
+                line1 : consultantInterface.line1,
+                city : consultantInterface.city,
+                postalCode : consultantInterface.postalCode,
+                countryId : consultantInterface.countryId,
             }
         } as ConsultantUpdate;
 
-        this.phoneNumber? retConsultant.phoneNumber = this.phoneNumber : null;
-        this.outYear? retConsultant.outYear = this.outYear : null;
-        this.line2? retConsultant.address.line2 = this.line2 : null;
+        consultantInterface.phoneNumber? retConsultant.phoneNumber = consultantInterface.phoneNumber : null;
+        consultantInterface.outYear? retConsultant.outYear = consultantInterface.outYear : null;
+        consultantInterface.line2? retConsultant.address.line2 = consultantInterface.line2 : null;
 
         let form_data = new FormData();
         for (let key in retConsultant) {

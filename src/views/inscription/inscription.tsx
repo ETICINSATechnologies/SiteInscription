@@ -100,11 +100,42 @@ const Inscription = (props: InscriptionProps) => {
 
     const handleSubmit = (event : React.FormEvent) => {
         event.preventDefault();
-        console.log(state.person);
-        console.log('submitted');
-        let form_data : FormData;
+        let form_data : FormData  = state.person.getFormData(state.person);
 
-        form_data  = state.person.getFormData();
+        if (props.isConsultant) {
+            fetch('sg/consultant-inscription', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                },
+
+                body: form_data
+            })
+                .then(res => {
+                    if (res.status === 201) {
+                        console.log('success');
+                    } else {
+                        alert('Veuillez-verifier vos informations');
+                    }
+                });
+        } else {
+            fetch('sg/membre-inscription', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                },
+
+                body: form_data
+            })
+                .then(res => {
+                    if (res.status === 201) {
+                        console.log('success');
+                        payment();
+                    } else {
+                        alert('Veuillez-verifier vos informations');
+                    }
+                });
+        }
     };
 
     const onChange = (event: React.ChangeEvent) => {
