@@ -1,10 +1,13 @@
-import React, {useState} from 'react';
+import React, { useState, useEffect } from 'react';
 import './inscription.css';
 import Modal from "../../components/Modal/Modal";
-import {Member, defaultMember} from "../../model/Member";
-import {Consultant, defaultConsultant} from "../../model/Consultant";
-import {Person} from "../../model/Person";
-import {Card, Button, Form} from "react-bootstrap";
+import { Member, defaultMember } from "../../model/Member";
+import { Consultant, defaultConsultant } from "../../model/Consultant";
+import { Person } from "../../model/Person";
+import { Card, Button, Form } from "react-bootstrap";
+import { Department } from '../../model/Department';
+import { Country } from '../../model/Country';
+import { Pole } from '../../model/Pole';
 
 declare global {
     interface Window { Stripe: any; }
@@ -12,25 +15,102 @@ declare global {
 
 interface InscriptionState {
     person: Person
-    showModal : boolean
+    showModal: boolean
+}
+
+interface MetaInfo {
+    departments: Department[]
+    poles: Pole[]
+    countries: Country[]
 }
 
 interface InscriptionProps {
-    isConsultant : boolean
+    isConsultant: boolean
 }
 
-const Inscription = (props : InscriptionProps) =>{
-    const [state, setState]=useState({
-                                    person: props.isConsultant? defaultConsultant:defaultMember,
-                                    showModal: false,
-                                } as InscriptionState);
+const Inscription = (props: InscriptionProps) => {
+    const [state, setState] = useState({
+        person: props.isConsultant ? defaultConsultant : defaultMember,
+        showModal: false,
+    } as InscriptionState);
 
+    const [metaInfo, setMetaInfo] = useState({
+        departments: [],
+        poles: [],
+        countries: []
+    } as MetaInfo);
 
-    const onSubmit = () =>{
+    useEffect(() => {
+        // get departments
+        fetch('core/department', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+        })
+            .then(res => {
+                if (res.status == 200) {
+                    res.json()
+                        .then(result => {
+                            setMetaInfo({
+                                ...metaInfo,
+                                departments: result
+                            })
+                        }
+                        )
+                }
+            }
+            )
+
+        // get countries
+        fetch('core/country', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+        })
+            .then(res => {
+                if (res.status == 200) {
+                    res.json()
+                        .then(result => {
+                            setMetaInfo({
+                                ...metaInfo,
+                                countries: result
+                            })
+                        }
+                        )
+                }
+            }
+            )
+
+        // get poles
+        fetch('core/pole', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+        })
+            .then(res => {
+                if (res.status == 200) {
+                    res.json()
+                        .then(result => {
+                            setMetaInfo({
+                                ...metaInfo,
+                                poles: result
+                            })
+                        }
+                        )
+                }
+            }
+            )
+
+    }, []);
+
+    const onSubmit = () => {
         // compose our own form data
         let form_data = new FormData();
 
-        for ( let key in state.person ) {
+        for (let key in state.person) {
             // console.log(key + ' : ' + (state.person[key]));
             form_data.append(key, state.person[key]);
         }
@@ -41,7 +121,7 @@ const Inscription = (props : InscriptionProps) =>{
                 headers: {
                     'Content-Type': 'multipart/form-data'
                 },
-    
+
                 body: form_data
             })
                 .then(res => {
@@ -49,7 +129,7 @@ const Inscription = (props : InscriptionProps) =>{
                         console.log('success');
                         showModal();
                     } else {
-                        
+
                     }
                 });
         } else {
@@ -58,16 +138,16 @@ const Inscription = (props : InscriptionProps) =>{
                 headers: {
                     'Content-Type': 'multipart/form-data'
                 },
-    
+
                 body: form_data
             })
                 .then(res => {
                     if (res.status === 201) {
                         console.log('success');
                         res.json()
-                        .then (result => {
-                            console.log(result);
-                        })
+                            .then(result => {
+                                console.log(result);
+                            })
                     } else {
                         alert('Veuillez-verifier vos informations');
                     }
@@ -81,7 +161,7 @@ const Inscription = (props : InscriptionProps) =>{
     const showModal = () => {
         setState({
             ...state,
-            showModal : !state.showModal,
+            showModal: !state.showModal,
         })
     }
 
@@ -89,51 +169,51 @@ const Inscription = (props : InscriptionProps) =>{
         var stripe = window.Stripe('pk_test_O0FCm2559gZbRpWia2bR0yVm00Qc7SPLU0');
         stripe.redirectToCheckout({
             items: [
-              {sku: 'sku_EuRlqkdKSw1RxK', quantity: 1}
+                { sku: 'sku_EuRlqkdKSw1RxK', quantity: 1 }
             ],
             successUrl: 'https://www.google.sc/',
             cancelUrl: 'https://www.google.fr/',
-          }).then(function (result: any) {
+        }).then(function (result: any) {
             // If `redirectToCheckout` fails due to a browser or network
             // error, display the localized error message to your customer
             // using `result.error.message`.
-          });
+        });
     }
+
+    let getOptions = (objectArray: any[]) => objectArray.map((option: any, index: any) => {
+        return <option key={index} value={option.id}>{option.label}</option>
+    });
 
     return (
         <React.Fragment>
-            <div className='container Inscription' style={{backgroundColor : '#005360'}}>
-                <Card className='card' style={{ width: '95%', maxWidth: '25rem', margin : 'auto auto' }}>
+            <div className='container Inscription' style={{ backgroundColor: '#005360' }}>
+                <Card className='card' style={{ width: '95%', maxWidth: '25rem', margin: 'auto auto' }}>
                     <Card.Header>ETIC INSA Technologies</Card.Header>
-                    <Card.Body style={{textAlign: 'center'}}>
-                        <Card.Title>{props.isConsultant? 'Inscription Consultant' : 'Inscription Membre'}</Card.Title>
+                    <Card.Body style={{ textAlign: 'center' }}>
+                        <Card.Title>{props.isConsultant ? 'Inscription Consultant' : 'Inscription Membre'}</Card.Title>
                         <Form>
                             <Form.Group controlId='firstName'>
                                 <Form.Label>Prénom</Form.Label>
-                                <Form.Control type='text' placeholder="Denys" required 
-                                                maxLength={20}/>
+                                <Form.Control type='text' placeholder="Denys" required
+                                    maxLength={20} />
                             </Form.Group>
                             <Form.Group controlId="lastName">
                                 <Form.Label>Nom de famille</Form.Label>
                                 <Form.Control type="text" placeholder="Chomel" required
-                                                maxLength={20}/>
+                                    maxLength={20} />
                             </Form.Group>
                             <Form.Group controlId="phoneNumber">
                                 <Form.Label>Téléphone</Form.Label>
                                 <Form.Control type="tel" placeholder="0612345678" required
-                                                pattern='[0]{1}[0-9]{9}'/>
+                                    pattern='[0]{1}[0-9]{9}' />
                             </Form.Group>
                             <Form.Group controlId="department">
                                 <Form.Label>Department</Form.Label>
                                 <Form.Control as="select" required>
-                                    <option>1</option>
-                                    <option>2</option>
-                                    <option>3</option>
-                                    <option>4</option>
-                                    <option>5</option>
+                                    {getOptions(metaInfo.departments)};
                                 </Form.Control>
                             </Form.Group>
-                            {props.isConsultant?
+                            {props.isConsultant ?
                                 // all consultant specific fields here
                                 <Form.Group controlId='document_vitale_card'>
                                     <Form.Label>Carte Vitale</Form.Label>
@@ -144,7 +224,7 @@ const Inscription = (props : InscriptionProps) =>{
                                 null
                             }
                             <Button variant="primary" type="submit">
-                                {props.isConsultant? 'Valider' : 'Valider et Payer'}
+                                {props.isConsultant ? 'Valider' : 'Valider et Payer'}
                             </Button>
                         </Form>
                     </Card.Body>
