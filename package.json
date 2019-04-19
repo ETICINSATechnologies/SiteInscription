@@ -8,7 +8,10 @@
     "@types/react": "16.8.10",
     "@types/react-dom": "16.8.3",
     "@types/react-router-dom": "^4.3.1",
+    "@types/stripe": "^6.25.11",
+    "bootstrap": "^4.3.1",
     "react": "^16.8.6",
+    "react-bootstrap": "^1.0.0-beta.8",
     "react-dom": "^16.8.6",
     "react-router-dom": "^5.0.0",
     "react-scripts": "2.1.8",
@@ -28,5 +31,6 @@
     "not dead",
     "not ie <= 11",
     "not op_mini all"
-  ]
+  ],
+  "proxy": "https://virtserver.swaggerhub.com/ConorRyan/Keros-API/1.0.0"
 }

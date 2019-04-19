@@ -9,6 +9,7 @@
 
     display: grid;
     grid-template-columns: 1fr;
+    font-size: 1em;
 }
 
 .Inscription .content h1{
@@ -20,4 +21,16 @@
 .Inscription .content *{
     display: grid;
     margin: 0.5vmin 1vmin 0.5vmin 1vmin;
+}
+
+.Inscription .button_valider{
+    margin: auto;
+}
+
+.Inscription Form.Control:valid{
+    border: 2px solid black;
+}
+
+.Inscription Form.Control:invalid{
+    border: 2px dashed red;
 }

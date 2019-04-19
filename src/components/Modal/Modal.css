@@ -1,0 +1,43 @@
+.Modal{
+    position: fixed;
+    top: 0;
+    bottom:0;
+    left: 0;
+    right: 0;
+    background-color: rgba(0,0,0,0.9);
+    padding: 2vmin;
+    font-size: 1em;
+    text-align: center; 
+}
+
+
+.Modal .content {
+    background-color: #005360;
+    border-radius: 2vmin;
+    width: 30vmin;
+    height: 30vmin;
+    margin: 0 auto;
+    padding: 8vmin;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    position: fixed;
+    color: #fff;
+}
+
+.Modal .header {
+    position: absolute;
+    right: 2vmin;
+    top:2vmin;
+}
+
+.Modal .annuler {
+    width: 6vmin;
+    margin: 1vmin auto auto;
+    vertical-align: top;
+    horiz-align: right;
+}
+
+.Modal p {
+    background-color: #005360;
+}

@@ -1,26 +1,34 @@
 import React from 'react';
 import './home.css';
 import Logo from '../../resources/logo_etic_flashy.gif';
-import {Link} from "react-router-dom";
+import {Card, Button} from "react-bootstrap";
 
 
 const Home = () => {
 
     return (
         <React.Fragment>
-            <div className='Home'>
-                <div className='content'>
-                    <h1>ETIC INSA Technologies</h1>
-                    <p>Bienvenue sur le site d'inscription en ligne pour rejoindre la Junior-Entreprise de l'INSA : ETIC INSA Technologies</p>
-                    <Link className="redirect" to="/member">
-                        Devenir Membre Actif
-                    </Link>
-                    <Link className="redirect" to="/consultant">
-                        Devenir Consultant
-                    </Link>
-                    <p>Tu rencontres un problème ? Contacte nous : responsable-dsi@etic-insa.com </p>
-                    <img className='logo' src={Logo} alt='logo etic'/>
-                </div>
+            <div className='container Home' style={{backgroundColor : '#005360'}}>
+                <Card className='card' style={{ width: '95%', maxWidth: '25rem', margin : 'auto auto' }}>
+                    <Card.Header>ETIC INSA Technologies</Card.Header>
+                    <Card.Body style={{textAlign: 'center'}}>
+                        <Card.Title>Inscription</Card.Title>
+                        <Card.Text>
+                            Bienvenue sur le site d'inscription en ligne pour rejoindre la Junior-Entreprise de l'INSA : ETIC INSA Technologies
+                        </Card.Text>
+                        <Button href="/member" variant="primary" style={{ width: '100%', margin: '0.2rem auto 0.2rem auto'}}>
+                            Devenir Membre Actif
+                        </Button>
+                        <Button href="/consultant" variant="primary" style={{ width: '100%',margin: '0.2rem auto 1rem auto'}}>
+                            Devenir Consultant
+                        </Button>
+                        <Card.Text>
+                            Tu rencontres un problème ? Contacte nous : responsable-dsi@etic-insa.com
+                        </Card.Text>
+                        <Card.Img src={Logo} alt='logo etic' className='logo' 
+                            style={{width:'50px', filter : 'contrast(1.25)'}}/>
+                    </Card.Body>
+                </Card>
             </div>
         </React.Fragment>
     )
