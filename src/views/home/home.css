@@ -1,53 +1,11 @@
-:root {
-    --board-left-width: 12vw;
-    --board-right-width: 12vw;
-}
 
 body{
     background-color: #005360;
 }
 
-.Home .content{
-    background-color: #fff;
-    border-radius: 2vmin;
-    width: 50vmin;
-    height: 75vh;
-    margin: 0 auto;
-    padding: 8vmin;
+.Home .card{
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
     position: fixed;
-
-    display: grid;
-    grid-template-rows: repeat(6, 1fr);
-}
-
-.Home .content h1{
-    font-size: 4vmin;
-    text-align: center;
-    color: #005360;
-    display: grid;
-}
-
-.Home .content .logo {
-    height: 8vh;
-    position: relative;
-    transform: translate(-50%, -50%);
-    filter: contrast(1.25);
-    top: 50%;
-    left: 50%;
-}
-
-.Home .content .redirect{
-    background-color: #005360;
-    border-radius: 2vmin;
-    border: none;
-    margin: auto;
-    padding: 3vmin;
-    width: 90%;
-    color: #fff;
-    font-size: 3vmin;
-    text-align: center;
-    text-decoration: none;
 }

@@ -1,15 +1,23 @@
-import {Address} from './Address';
-import {Department} from './Department';
-import {Nationality} from "./Nationality";
+import {AddressUpdate} from './Address';
 
-export interface Person{
+interface PersonGeneral {
     firstName: string
     lastName: string
-    department: Department
+    departmentId: number
     email: string
     phoneNumber?: string
     outYear?: number
-    nationality: Nationality
-    address: Address
-    [key: string]: any
+    nationalityId: number
+    [key: string]: any 
+}
+export interface Person extends PersonGeneral{
+    line1: string
+    line2?: string
+    city: string
+    postalCode: number
+    countryId: number
+}   
+
+export interface PersonUpdate extends PersonGeneral {
+    address: AddressUpdate
 }
