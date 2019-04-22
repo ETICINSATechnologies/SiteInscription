@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import './inscription.css';
-import Modal from "../../components/Modal/Modal";
 import { Member, defaultMember, MemberInterface } from "../../model/Member";
 import { Consultant, defaultConsultant, ConsultantInterface } from "../../model/Consultant";
 import { Person } from "../../model/Person";
@@ -115,7 +114,7 @@ const Inscription = (props: InscriptionProps) => {
                     if (res.status === 201) {
                         console.log('success');
                     } else {
-                        alert('Veuillez-verifier vos informations');
+                        alert('Oh oh, vérifie tes informations');
                     }
                 });
         } else {
@@ -132,7 +131,7 @@ const Inscription = (props: InscriptionProps) => {
                         console.log('success');
                         payment();
                     } else {
-                        alert('Veuillez-verifier vos informations');
+                        alert('Oh oh, vérifie tes informations');
                     }
                 });
         }
@@ -152,23 +151,6 @@ const Inscription = (props: InscriptionProps) => {
             })
         }
     };
-
-    const onChangeDropDown = (event: React.ChangeEvent) => {
-        event.persist();
-        let property : string=event.target.className.split(" ")[0];
-        let value=(event.target as HTMLFormElement).value;
-        if (state.person.hasOwnProperty(property)) {
-        }
-        console.log(value);
-    };
-
-    const showModal = () => {
-        setState({
-            ...state,
-            showModal: !state.showModal,
-        })
-    
-    }
 
     const payment = () => {
         var stripe = window.Stripe('pk_test_O0FCm2559gZbRpWia2bR0yVm00Qc7SPLU0');
