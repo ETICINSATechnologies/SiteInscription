@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import './inscription.css';
-import Modal from "../../components/Modal/Modal";
 import { Member, defaultMember, MemberInterface } from "../../model/Member";
 import { Consultant, defaultConsultant, ConsultantInterface } from "../../model/Consultant";
 import { Person } from "../../model/Person";
@@ -40,67 +39,50 @@ const Inscription = (props: InscriptionProps) => {
         countries: []
     } as MetaInfo);
 
-    // you added IF to test, remove it later
+
     useEffect(() => {
-        let departmentsTemp:Department[];
-        let polesTemp:Pole[];
-        let countriesTemp:Country[];
-        /* find a fucking better way to do this */
-        // get departments
-        fetch('core/department', {
-            method: 'GET'
-        })
-            .then(res => {
-                if (res.status == 200) {
-                    res.json()
-                        .then(result => {
-                            departmentsTemp = result
-                            departmentsTemp.push({id: 2, label :'IF' ,name :'Informatique'})
-                            // get countries
-                            fetch('core/country', {
-                                method: 'GET'
-                            })
-                                .then(res => {
-                                    if (res.status == 200) {
-                                        res.json()
-                                            .then(result => {
-                                                countriesTemp = result
-                                                // get poles
-                                                fetch('core/pole', {
-                                                    method: 'GET'
-                                                })
-                                                    .then(res => {
-                                                        if (res.status == 200) {
-                                                            res.json()
-                                                                .then(result => {
-                                                                    polesTemp = result
-                                                                    setMetaInfo({
-                                                                        poles : polesTemp,
-                                                                        departments : departmentsTemp,
-                                                                        countries : countriesTemp
-                                                                    })
-                                                                }
-                                                                )
-                                                        }
-                                                    }
-                                                    )
-                                            }
-                                            )
-                                    }
-                                }
-                                )
+        let departmentsTemp: Department[];
+        let polesTemp: Pole[];
+        let countriesTemp: Country[];
 
-                        }
-                        )
-                }
+        getDepartments().then( data => {
+                departmentsTemp=data;
+                getCountries().then( data => {
+                    countriesTemp=data;
+                    getPoles().then( data => {
+                        polesTemp=data;
+                        setMetaInfo({
+                            poles : polesTemp,
+                            departments : departmentsTemp,
+                            countries : countriesTemp
+                        })
+                    })
+                })
             }
-            )
-
+        )
     }, []);
 
-    const handleSubmit = (event : React.FormEvent) => {
+    const getDepartments = async() => {
+        let response = await fetch('/api/departments');
+        let data = await response.json();
+        return data;
+    }
+
+    const getPoles = async() => {
+        let response = await fetch('/api/poles');
+        let data = await response.json();
+        return data;
+    }
+
+    const getCountries = async() => {
+        let response = await fetch('/api/countries');
+        let data = await response.json();
+        return data;
+    }
+
+    const handleSubmit = (event: React.FormEvent) => {
         event.preventDefault();
-        let form_data : FormData  = state.person.getFormData(state.person);
+        let form_data: FormData = state.person.getFormData(state.person);
 
         if (props.isConsultant) {
             fetch('sg/consultant-inscription', {
@@ -115,7 +97,7 @@ const Inscription = (props: InscriptionProps) => {
                     if (res.status === 201) {
                         console.log('success');
                     } else {
-                        alert('Veuillez-verifier vos informations');
+                        alert('Oh oh, vérifie tes informations');
                     }
                 });
         } else {
@@ -132,7 +114,7 @@ const Inscription = (props: InscriptionProps) => {
                         console.log('success');
                         payment();
                     } else {
-                        alert('Veuillez-verifier vos informations');
+                        alert('Oh oh, vérifie tes informations');
                     }
                 });
         }
@@ -140,35 +122,18 @@ const Inscription = (props: InscriptionProps) => {
 
     const onChange = (event: React.ChangeEvent) => {
         event.persist();
-        let property : string=event.target.className.split(" ")[0];
-        let value=(event.target as HTMLFormElement).value;
+        let property: string = event.target.className.split(" ")[0];
+        let value = (event.target as HTMLFormElement).value;
         if (state.person.hasOwnProperty(property)) {
             setState({
-                ... state,
-                person : {
+                ...state,
+                person: {
                     ...state.person,
-                    [property] : value,
+                    [property]: value,
                 }
             })
         }
     };
-
-    const onChangeDropDown = (event: React.ChangeEvent) => {
-        event.persist();
-        let property : string=event.target.className.split(" ")[0];
-        let value=(event.target as HTMLFormElement).value;
-        if (state.person.hasOwnProperty(property)) {
-        }
-        console.log(value);
-    };
-
-    const showModal = () => {
-        setState({
-            ...state,
-            showModal: !state.showModal,
-        })
-    
-    }
 
     const payment = () => {
         var stripe = window.Stripe('pk_test_O0FCm2559gZbRpWia2bR0yVm00Qc7SPLU0');
@@ -192,9 +157,9 @@ const Inscription = (props: InscriptionProps) => {
     const makeYears = () => {
         //make array
         let dt = new Date();
-        let years : number[] = [dt.getFullYear()];
-        for (let i=1;i<6;++i) years.push(dt.getFullYear()+i);
-        
+        let years: number[] = [dt.getFullYear()];
+        for (let i = 1; i < 6; ++i) years.push(dt.getFullYear() + i);
+
         //make options
         let yearList = () => years.map((option: number, index: any) => {
             return <option key={index} value={option}>{option}</option>
@@ -224,7 +189,7 @@ const Inscription = (props: InscriptionProps) => {
                             <Form.Group controlId="phoneNumber">
                                 <Form.Label>Téléphone</Form.Label>
                                 <Form.Control className='phoneNumber' type="tel" placeholder="0612345678"
-                                    pattern='[0]{1}[0-9]{9}' onChange={onChange as any}/>
+                                    pattern='[0]{1}[0-9]{9}' onChange={onChange as any} />
                             </Form.Group>
                             <Form.Group controlId="departmentId">
                                 <Form.Label>Departement</Form.Label>
@@ -248,7 +213,7 @@ const Inscription = (props: InscriptionProps) => {
                                 // all member specific fields here
                                 null
                             }
-                            <div className="text-center"> 
+                            <div className="text-center">
                                 <Button variant="primary" type='submit'>
                                     {props.isConsultant ? 'Valider' : 'Valider et Payer'}
                                 </Button>
