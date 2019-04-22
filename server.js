@@ -67,7 +67,7 @@ if(process.env.NODE_ENV === 'production') {
   }
 
   // get meta data
-  async function getDepartments (){
+  const getDepartments = async() => {
     let response = await fetch((process.env.API_HOST +'/api/v1/core/department'), {
       headers: { Authorization: api_token }
     });
@@ -75,7 +75,7 @@ if(process.env.NODE_ENV === 'production') {
     return data;
   }
 
-  async function getPoles (){
+  const getPoles = async() => {
     let response = await fetch((process.env.API_HOST +'/api/v1/core/pole'), {
       headers: { Authorization: api_token }
     });
@@ -83,7 +83,7 @@ if(process.env.NODE_ENV === 'production') {
     return data;
   }
 
-  async function getCountries (){
+  const getCountries = async() => {
     let response = await fetch((process.env.API_HOST +'/api/v1/core/country'), {
       headers: { Authorization: api_token }
     });
