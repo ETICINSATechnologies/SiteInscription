@@ -5,11 +5,19 @@
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js"
+    "client-install": "npm install --prefix client",
+    "start": "node server.js",
+    "server": "nodemon server.js",
+    "client": "npm start --prefix client",
+    "dev": "concurrently \"npm run server\" \"npm run client\""
   },
   "author": "Sadsitha Lokuge",
   "license": "ISC",
   "dependencies": {
-    "express": "^4.16.4"
+    "concurrently": "^4.1.0",
+    "dotenv": "^7.0.0",
+    "express": "^4.16.4",
+    "node-fetch": "^2.3.0",
+    "nodemon": "^1.18.11"
   }
 }

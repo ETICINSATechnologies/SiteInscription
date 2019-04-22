@@ -32,5 +32,5 @@
     "not ie <= 11",
     "not op_mini all"
   ],
-  "proxy": "https://virtserver.swaggerhub.com/ConorRyan/Keros-API/1.0.0"
+  "proxy": "http://localhost:5000"
 }

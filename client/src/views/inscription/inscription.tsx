@@ -38,15 +38,13 @@ const Inscription = (props: InscriptionProps) => {
         poles: [],
         countries: []
     } as MetaInfo);
-
-    // you added IF to test, remove it later
     useEffect(() => {
         let departmentsTemp:Department[];
         let polesTemp:Pole[];
         let countriesTemp:Country[];
         /* find a fucking better way to do this */
         // get departments
-        fetch('core/department', {
+        fetch('api/departments', {
             method: 'GET'
         })
             .then(res => {
@@ -54,9 +52,8 @@ const Inscription = (props: InscriptionProps) => {
                     res.json()
                         .then(result => {
                             departmentsTemp = result
-                            departmentsTemp.push({id: 2, label :'IF' ,name :'Informatique'})
                             // get countries
-                            fetch('core/country', {
+                            fetch('api/countries', {
                                 method: 'GET'
                             })
                                 .then(res => {
@@ -65,7 +62,7 @@ const Inscription = (props: InscriptionProps) => {
                                             .then(result => {
                                                 countriesTemp = result
                                                 // get poles
-                                                fetch('core/pole', {
+                                                fetch('api/poles', {
                                                     method: 'GET'
                                                 })
                                                     .then(res => {
