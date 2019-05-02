@@ -85,7 +85,7 @@ const Inscription = (props: InscriptionProps) => {
         let form_data: FormData = state.person.getFormData(state.person);
 
         if (props.isConsultant) {
-            fetch('sg/consultant-inscription', {
+            fetch('api/consultant-inscription', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'multipart/form-data'
@@ -94,14 +94,14 @@ const Inscription = (props: InscriptionProps) => {
                 body: form_data
             })
                 .then(res => {
-                    if (res.status === 201) {
+                    if (res.status === 200) {
                         console.log('success');
                     } else {
                         alert('Oh oh, vérifie tes informations');
                     }
                 });
         } else {
-            fetch('sg/membre-inscription', {
+            fetch('api/membre-inscription', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'multipart/form-data'
@@ -110,7 +110,7 @@ const Inscription = (props: InscriptionProps) => {
                 body: form_data
             })
                 .then(res => {
-                    if (res.status === 201) {
+                    if (res.status === 200) {
                         console.log('success');
                         payment();
                     } else {

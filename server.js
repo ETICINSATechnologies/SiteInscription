@@ -30,6 +30,16 @@ app.get('/api/countries', (req, res) => {
   getCountries().then(data => res.send(data));
 })
 
+app.post('/api/membre-inscription', (req,res) => {
+  res.send('null');
+  res.status(201).end();
+})
+
+app.post('/api/consultant-inscription', (req,res) => {
+  res.send('null');
+  res.status(201).end();
+})
+
 // stripe path
 app.post('/api/webhook', (request, response) => {
   let sig = request.headers["stripe-signature"];
@@ -68,8 +78,6 @@ if(process.env.NODE_ENV === 'production') {
   })
 
 }
-
-
 
 //server-side functions
   // login
