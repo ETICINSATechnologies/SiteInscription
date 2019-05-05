@@ -137,10 +137,6 @@ const Inscription = (props: InscriptionProps) => {
     }
   };
 
-  const onChangeNumbersOnly = (event: React.ChangeEvent) => {
-    event.persist();
-  };
-
   const payment = () => {
     var stripe = window.Stripe("pk_test_O0FCm2559gZbRpWia2bR0yVm00Qc7SPLU0");
     stripe
