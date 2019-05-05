@@ -137,6 +137,10 @@ const Inscription = (props: InscriptionProps) => {
     }
   };
 
+  const onChangeNumbersOnly = (event: React.ChangeEvent) => {
+    event.persist();
+  };
+
   const payment = () => {
     var stripe = window.Stripe("pk_test_O0FCm2559gZbRpWia2bR0yVm00Qc7SPLU0");
     stripe
@@ -207,6 +211,7 @@ const Inscription = (props: InscriptionProps) => {
                   type="text"
                   placeholder="Denys"
                   required
+                  pattern="^[a-zA-Zàâçéèêëîïôûùüÿñæœ .-]*$"
                   maxLength={20}
                   onChange={onChange as any}
                 />
@@ -219,6 +224,7 @@ const Inscription = (props: InscriptionProps) => {
                   placeholder="Chomel"
                   required
                   maxLength={20}
+                  pattern="^[a-zA-Zàâçéèêëîïôûùüÿñæœ .-]*$"
                   onChange={onChange as any}
                 />
               </Form.Group>
@@ -229,6 +235,8 @@ const Inscription = (props: InscriptionProps) => {
                   className="mail"
                   type="text"
                   placeholder="denys.chomel@insa-lyon.fr"
+                  required
+                  pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$"
                   onChange={onChange as any}
                 />
               </Form.Group>
@@ -294,7 +302,7 @@ const Inscription = (props: InscriptionProps) => {
                     <Form.Label>
                       Titre de séjour valide (si étudiant étranger)
                     </Form.Label>
-                    <Form.Control type="file" required />
+                    <Form.Control type="file" />
                   </Form.Group>
                 </div>
               ) : (
@@ -325,14 +333,6 @@ const Inscription = (props: InscriptionProps) => {
                   </Form.Group>
 
                   <Form.Group controlId="address">
-                    <Form.Label>Numéro*</Form.Label>
-                    <Form.Control
-                      className="id"
-                      as="select"
-                      onChange={onChange as any}
-                      required
-                    />
-
                     <Form.Label>Adresse*</Form.Label>
                     <Form.Control
                       className="line1"
@@ -347,7 +347,6 @@ const Inscription = (props: InscriptionProps) => {
                     <Form.Control
                       className="line2"
                       onChange={onChange as any}
-                      required
                       placeholder="Appt 421"
                     />
 
@@ -356,6 +355,7 @@ const Inscription = (props: InscriptionProps) => {
                       className="city"
                       onChange={onChange as any}
                       required
+                      pattern="^[a-zA-Zàâçéèêëîïôûùüÿñæœ .-]*$"
                       placeholder="Villeurbanne"
                     />
 
@@ -364,6 +364,7 @@ const Inscription = (props: InscriptionProps) => {
                       className="city"
                       onChange={onChange as any}
                       required
+                      pattern="[0-9]{5}"
                       placeholder="69100"
                     />
 
