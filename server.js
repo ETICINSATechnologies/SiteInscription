@@ -16,16 +16,20 @@ app.get('/token', (req, res) => {
   res.send({token: keros_token});
 })
 
-app.get('/api/departments', (req, res) => {
+app.get('/api/department', (req, res) => {
   getDepartments().then(data => res.send(data));
 })
 
-app.get('/api/poles', (req, res) => {
+app.get('/api/pole', (req, res) => {
   getPoles().then(data => res.send(data));
 })
 
-app.get('/api/countries', (req, res) => {
+app.get('/api/country', (req, res) => {
   getCountries().then(data => res.send(data));
+})
+
+app.get('/api/gender', (req, res) => {
+  getGenders().then(data => res.send(data));
 })
 
 //production mode only
@@ -85,6 +89,14 @@ if(process.env.NODE_ENV === 'production') {
 
   const getCountries = async() => {
     let response = await fetch((process.env.API_HOST +'/api/v1/core/country'), {
+      headers: { Authorization: api_token }
+    });
+    let data = await response.json();
+    return data;
+  }
+
+  const getGenders = async() => {
+    let response = await fetch((process.env.API_HOST +'/api/v1/core/gender'), {
       headers: { Authorization: api_token }
     });
     let data = await response.json();

@@ -4,6 +4,8 @@ interface PersonGeneral {
     firstName: string
     lastName: string
     departmentId: number
+    genderId: number
+    birthday: string
     email: string
     phoneNumber?: string
     outYear?: number

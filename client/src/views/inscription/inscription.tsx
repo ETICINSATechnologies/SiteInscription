@@ -1,16 +1,13 @@
 import React, { useState, useEffect } from "react";
 import "./inscription.css";
-import { Member, defaultMember, MemberInterface } from "../../model/Member";
-import {
-  Consultant,
-  defaultConsultant,
-  ConsultantInterface
-} from "../../model/Consultant";
+import { defaultMember } from "../../model/Member";
+import { defaultConsultant } from "../../model/Consultant";
 import { Person } from "../../model/Person";
 import { Card, Button, Form } from "react-bootstrap";
 import { Department } from "../../model/Department";
 import { Country } from "../../model/Country";
 import { Pole } from "../../model/Pole";
+import { Gender } from "../../model/Gender";
 
 declare global {
   interface Window {
@@ -27,6 +24,7 @@ interface MetaInfo {
   departments: Department[];
   poles: Pole[];
   countries: Country[];
+  genders: Gender[];
 }
 
 interface InscriptionProps {
@@ -42,44 +40,56 @@ const Inscription = (props: InscriptionProps) => {
   const [metaInfo, setMetaInfo] = useState({
     departments: [],
     poles: [],
-    countries: []
+    countries: [],
+    genders: []
   } as MetaInfo);
 
   useEffect(() => {
     let departmentsTemp: Department[];
     let polesTemp: Pole[];
     let countriesTemp: Country[];
+    let gendersTemp: Gender[];
 
     getDepartments().then(data => {
-      departmentsTemp = data;
+      data ? departmentsTemp = data : null
       getCountries().then(data => {
-        countriesTemp = data;
+        data ? countriesTemp = data : null
         getPoles().then(data => {
-          polesTemp = data;
-          setMetaInfo({
-            poles: polesTemp,
-            departments: departmentsTemp,
-            countries: countriesTemp
-          });
+          data ? polesTemp = data : null
+          getGenders().then(data => {
+            data ? gendersTemp = data : null
+            setMetaInfo({
+              poles: polesTemp,
+              departments: departmentsTemp,
+              countries: countriesTemp,
+              genders: gendersTemp
+            });
+          })
         });
       });
     });
   }, []);
 
   const getDepartments = async () => {
-    let response = await fetch("/api/departments");
+    let response = await fetch("/api/department");
     let data = await response.json();
     return data;
   };
 
   const getPoles = async () => {
-    let response = await fetch("/api/poles");
+    let response = await fetch("/api/pole");
     let data = await response.json();
     return data;
   };
 
   const getCountries = async () => {
-    let response = await fetch("/api/countries");
+    let response = await fetch("/api/country");
+    let data = await response.json();
+    return data;
+  };
+
+  const getGenders = async () => {
+    let response = await fetch("/api/gender");
     let data = await response.json();
     return data;
   };
@@ -116,7 +126,7 @@ const Inscription = (props: InscriptionProps) => {
           console.log("success");
           payment();
         } else {
-          alert("Oh oh, vérifie tes informations");
+          alert("Uh oh, vérifie tes informations");
         }
       });
     }
@@ -137,6 +147,12 @@ const Inscription = (props: InscriptionProps) => {
     }
   };
 
+  const onChangeFile = (event: React.ChangeEvent) => {
+    event.persist();
+
+    //to do
+  };
+
   const payment = () => {
     var stripe = window.Stripe("pk_test_O0FCm2559gZbRpWia2bR0yVm00Qc7SPLU0");
     stripe
@@ -145,7 +161,7 @@ const Inscription = (props: InscriptionProps) => {
         successUrl: "https://www.google.sc/",
         cancelUrl: "https://www.google.fr/"
       })
-      .then(function(result: any) {
+      .then(function (result: any) {
         // If `redirectToCheckout` fails due to a browser or network
         // error, display the localized error message to your customer
         // using `result.error.message`.
@@ -156,7 +172,7 @@ const Inscription = (props: InscriptionProps) => {
     objectArray.map((option: any, index: any) => {
       return (
         <option key={index} value={option.id}>
-          {option.label}
+          {option.name ? option.name : option.label}
         </option>
       );
     });
@@ -176,7 +192,6 @@ const Inscription = (props: InscriptionProps) => {
           </option>
         );
       });
-
     return yearList();
   };
 
@@ -212,6 +227,7 @@ const Inscription = (props: InscriptionProps) => {
                   onChange={onChange as any}
                 />
               </Form.Group>
+
               <Form.Group controlId="lastName">
                 <Form.Label>Nom de famille*</Form.Label>
                 <Form.Control
@@ -225,10 +241,33 @@ const Inscription = (props: InscriptionProps) => {
                 />
               </Form.Group>
 
-              <Form.Group controlId="mail">
+              <Form.Group controlId="genderId">
+                <Form.Label>Genre*</Form.Label>
+                <Form.Control
+                  className="genderId"
+                  as="select"
+                  onChange={onChange as any}
+                  required
+                >
+                  {makeOptions(metaInfo.genders)};
+                </Form.Control>
+              </Form.Group>
+
+              <Form.Group controlId="birthday">
+                <Form.Label>Date de naissance*</Form.Label>
+                <Form.Control
+                  className="birthday"
+                  type="date"
+                  required
+                  onChange={onChange as any}
+                >
+                </Form.Control>
+              </Form.Group>
+
+              <Form.Group controlId="email">
                 <Form.Label>Adresse mail*</Form.Label>
                 <Form.Control
-                  className="mail"
+                  className="email"
                   type="text"
                   placeholder="denys.chomel@insa-lyon.fr"
                   required
@@ -271,111 +310,118 @@ const Inscription = (props: InscriptionProps) => {
                 </Form.Control>
               </Form.Group>
 
+              <Form.Group controlId="nationalityId">
+                <Form.Label>Nationalité*</Form.Label>
+                <Form.Control
+                  className="nationalityId"
+                  as="select"
+                  onChange={onChange as any}
+                  required
+                >
+                  {makeOptions(metaInfo.countries)}
+                </Form.Control>
+              </Form.Group>
+
+              <Form.Group controlId="line1">
+                <Form.Label>Adresse*</Form.Label>
+                <Form.Control
+                  className="line1"
+                  onChange={onChange as any}
+                  required
+                  placeholder="13 Rue des Framboises"
+                />
+              </Form.Group>
+
+              <Form.Group controlId="line2">
+                <Form.Label>
+                  Complément d'adresse
+                </Form.Label>
+                <Form.Control
+                  className="line2"
+                  onChange={onChange as any}
+                />
+              </Form.Group>
+
+              <Form.Group controlId="city">
+                <Form.Label>Ville*</Form.Label>
+                <Form.Control
+                  className="city"
+                  onChange={onChange as any}
+                  required
+                  pattern="^[a-zA-Zàâçéèêëîïôûùüÿñæœ .-]*$"
+                  placeholder="Villeurbanne"
+                />
+              </Form.Group>
+
+              <Form.Group controlId="postalCode">
+                <Form.Label>Code postal*</Form.Label>
+                <Form.Control
+                  className="postalCode"
+                  onChange={onChange as any}
+                  required
+                  pattern="[0-9]{5}"
+                  placeholder="69100"
+                />
+              </Form.Group>
+
+              <Form.Group controlId="countryId">
+                <Form.Label>Pays*</Form.Label>
+                <Form.Control
+                  className="countryId"
+                  as="select"
+                  onChange={onChange as any}
+                  required
+                >
+                  {makeOptions(metaInfo.countries)}
+                </Form.Control>
+              </Form.Group>
+
               {props.isConsultant ? (
                 // all consultant specific fields here
                 <div className="consultantSpecific">
                   <Form.Group controlId="document_identity">
                     <Form.Label>Pièce d'identité*</Form.Label>
-                    <Form.Control type="file" required />
+                    <Form.Control className='document_identity' onChange={onChangeFile as any} type="file" required />
                   </Form.Group>
 
                   <Form.Group controlId="document_scolary_certificate">
                     <Form.Label>Certificat de scolarité*</Form.Label>
-                    <Form.Control type="file" required />
+                    <Form.Control className='document_scolary_certificate' onChange={onChangeFile as any} type="file" required />
                   </Form.Group>
 
                   <Form.Group controlId="document_vitale_card">
                     <Form.Label>Carte Vitale*</Form.Label>
-                    <Form.Control type="file" required />
+                    <Form.Control className='document_vitale_card' onChange={onChangeFile as any} type="file" required />
                   </Form.Group>
 
                   <Form.Group controlId="document_rib">
                     <Form.Label>RIB*</Form.Label>
-                    <Form.Control type="file" required />
+                    <Form.Control className='document_rib' onChange={onChangeFile as any} type="file" required />
                   </Form.Group>
 
                   <Form.Group controlId="document_resident_permit">
                     <Form.Label>
                       Titre de séjour valide (si étudiant étranger)
                     </Form.Label>
-                    <Form.Control type="file" />
+                    <Form.Control className='document_resident_permit' onChange={onChangeFile as any} type="file" />
                   </Form.Group>
                 </div>
               ) : (
-                // all member specific fields here
-                <div className="memberSpecific">
-                  <Form.Group controlId="wantedPoleId">
-                    <Form.Label>Pôle*</Form.Label>
-                    <Form.Control
-                      className="wantedPoleId"
-                      as="select"
-                      onChange={onChange as any}
-                      required
-                    >
-                      {makeOptions(metaInfo.poles)}
-                    </Form.Control>
-                  </Form.Group>
-
-                  <Form.Group controlId="nationalityId">
-                    <Form.Label>Nationalité*</Form.Label>
-                    <Form.Control
-                      className="nationalityId"
-                      as="select"
-                      onChange={onChange as any}
-                      required
-                    >
-                      {makeOptions(metaInfo.countries)}
-                    </Form.Control>
-                  </Form.Group>
-
-                  <Form.Group controlId="address">
-                    <Form.Label>Adresse*</Form.Label>
-                    <Form.Control
-                      className="line1"
-                      onChange={onChange as any}
-                      required
-                      placeholder="13 Rue des Framboises"
-                    />
-
-                    <Form.Label>
-                      Complément d'informations (facultatif)
-                    </Form.Label>
-                    <Form.Control
-                      className="line2"
-                      onChange={onChange as any}
-                      placeholder="Appt 421"
-                    />
-
-                    <Form.Label>Ville*</Form.Label>
-                    <Form.Control
-                      className="city"
-                      onChange={onChange as any}
-                      required
-                      pattern="^[a-zA-Zàâçéèêëîïôûùüÿñæœ .-]*$"
-                      placeholder="Villeurbanne"
-                    />
-
-                    <Form.Label>Code postal*</Form.Label>
-                    <Form.Control
-                      className="city"
-                      onChange={onChange as any}
-                      required
-                      pattern="[0-9]{5}"
-                      placeholder="69100"
-                    />
-
-                    <Form.Label>Pays*</Form.Label>
-                    <Form.Control
-                      className="countryLabel"
-                      as="select"
-                      onChange={onChange as any}
-                      required
-                    >
-                      {makeOptions(metaInfo.countries)}
-                    </Form.Control>
-                  </Form.Group>
-                </div>
-              )}
+                  // all member specific fields here
+                  <div className="memberSpecific">
+                    <Form.Group controlId="wantedPoleId">
+                      <Form.Label>Pôle*</Form.Label>
+                      <Form.Control
+                        className="wantedPoleId"
+                        as="select"
+                        onChange={onChange as any}
+                        required
+                      >
+                        {makeOptions(metaInfo.poles)}
+                      </Form.Control>
+                    </Form.Group>
+                  </div>
+                )}
 
               <div className="text-center">
                 <Button variant="primary" type="submit">

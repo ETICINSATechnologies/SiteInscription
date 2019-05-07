@@ -11,6 +11,8 @@ export interface MemberUpdate extends PersonUpdate {
 export class Member implements MemberInterface {
     firstName: string;
     lastName: string;
+    genderId: number;
+    birthday: string;
     departmentId: number;
     email: string;
     phoneNumber?: string;
@@ -28,6 +30,8 @@ export class Member implements MemberInterface {
     constructor(memberInterface: MemberInterface) {
         this.firstName = memberInterface.firstName;
         this.lastName = memberInterface.lastName;
+        this.genderId = memberInterface.genderId;
+        this.birthday = memberInterface.birthday;
         this.departmentId = memberInterface.departmentId;
         this.email = memberInterface.email;
         this.nationalityId = memberInterface.nationalityId;
@@ -45,6 +49,8 @@ export class Member implements MemberInterface {
         let retMember : MemberUpdate = {
             firstName : memberInterface.firstName,
             lastName : memberInterface.lastName,
+            genderId : memberInterface.genderId,
+            birthday : memberInterface.birthday,
             departmentId : memberInterface.departmentId,
             email : memberInterface.email,
             nationalityId : memberInterface.nationalityId,
