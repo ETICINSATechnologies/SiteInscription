@@ -11,10 +11,12 @@ let api_token='';
 //Static file declaration
 app.use(express.static(path.join(__dirname, 'client/build')));
 
-//paths
-app.get('/token', (req, res) => {
-  res.send({token: keros_token});
-})
+//Retrieve the raw body as a buffer and match all content types
+app.use(require('body-parser').raw({type: '*/*'}));
+
+//Stripe parameters
+const stripe = require("stripe")(process.env.STRIPE_SK);
+const endpointSecret = process.env.STRIPE_EP_SK;
 
 app.get('/api/department', (req, res) => {
   getDepartments().then(data => res.send(data));
@@ -32,6 +34,39 @@ app.get('/api/gender', (req, res) => {
   getGenders().then(data => res.send(data));
 })
 
+app.post('/api/membre-inscription', (req,res) => {
+  res.send('null');
+  res.status(201).end();
+})
+
+app.post('/api/consultant-inscription', (req,res) => {
+  res.send('null');
+  res.status(201).end();
+})
+
+// stripe path
+app.post('/api/webhook', (request, response) => {
+  let sig = request.headers["stripe-signature"];
+
+  try {
+    const event = stripe.webhooks.constructEvent(request.body, sig, endpointSecret);
+
+    // Handle the checkout.session.completed event
+    if (event.type === 'checkout.session.completed') {
+      const session = event.data.object;
+
+      // Fulfill the purchase...
+      handleCheckoutSession(session);
+    }
+  }
+  catch (err) {
+    response.status(400).end()
+  }
+
+  // Return a response to acknowledge receipt of the event
+  response.json({received: true});
+});
+
 //production mode only
 if(process.env.NODE_ENV === 'production') {
   app.use(express.static(path.join(__dirname, 'client/build')));
@@ -46,7 +81,6 @@ if(process.env.NODE_ENV === 'production') {
   })
 
 }
-
 
 //server-side functions
   // login
@@ -101,6 +135,11 @@ if(process.env.NODE_ENV === 'production') {
     });
     let data = await response.json();
     return data;
+    
+  const handleCheckoutSession = (session) => {
+      console.log('checkout session received');
+
+      //get member using session client id
   }
 
 
@@ -108,5 +147,5 @@ if(process.env.NODE_ENV === 'production') {
 //start server
 app.listen(port, (req, res) => {
   console.log( `Server listening on port: ${port}`);
-  login();
+  login(); //login to keros
 })
