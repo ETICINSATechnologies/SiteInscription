@@ -18,16 +18,20 @@ app.use(require('body-parser').raw({type: '*/*'}));
 const stripe = require("stripe")(process.env.STRIPE_SK);
 const endpointSecret = process.env.STRIPE_EP_SK;
 
-app.get('/api/departments', (req, res) => {
+app.get('/api/department', (req, res) => {
   getDepartments().then(data => res.send(data));
 })
 
-app.get('/api/poles', (req, res) => {
+app.get('/api/pole', (req, res) => {
   getPoles().then(data => res.send(data));
 })
 
-app.get('/api/countries', (req, res) => {
+app.get('/api/country', (req, res) => {
   getCountries().then(data => res.send(data));
+})
+
+app.get('/api/gender', (req, res) => {
+  getGenders().then(data => res.send(data));
 })
 
 app.post('/api/membre-inscription', (req,res) => {
@@ -62,7 +66,6 @@ app.post('/api/webhook', (request, response) => {
   // Return a response to acknowledge receipt of the event
   response.json({received: true});
 });
-
 
 //production mode only
 if(process.env.NODE_ENV === 'production') {
@@ -126,6 +129,13 @@ if(process.env.NODE_ENV === 'production') {
     return data;
   }
 
+  const getGenders = async() => {
+    let response = await fetch((process.env.API_HOST +'/api/v1/core/gender'), {
+      headers: { Authorization: api_token }
+    });
+    let data = await response.json();
+    return data;
+    
   const handleCheckoutSession = (session) => {
       console.log('checkout session received');
 

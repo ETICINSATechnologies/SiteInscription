@@ -19,6 +19,8 @@ export interface ConsultantUpdate extends PersonUpdate {
 export class Consultant implements ConsultantInterface {
     firstName: string
     lastName: string
+    genderId: number
+    birthday: string
     departmentId: number
     email: string
     phoneNumber?: string
@@ -39,6 +41,8 @@ export class Consultant implements ConsultantInterface {
     constructor(consultantInterface: ConsultantInterface) {
         this.firstName = consultantInterface.firstName;
         this.lastName = consultantInterface.lastName;
+        this.genderId = consultantInterface.genderId;
+        this.birthday = consultantInterface.birthday;
         this.departmentId = consultantInterface.departmentId;
         this.email = consultantInterface.email;
         this.nationalityId = consultantInterface.nationalityId;
@@ -60,6 +64,8 @@ export class Consultant implements ConsultantInterface {
         let retConsultant : ConsultantUpdate = {
             firstName : consultantInterface.firstName,
             lastName : consultantInterface.lastName,
+            genderId : consultantInterface.genderId,
+            birthday : consultantInterface.birthday,
             departmentId : consultantInterface.departmentId,
             email : consultantInterface.email,
             nationalityId : consultantInterface.nationalityId,
@@ -80,6 +86,8 @@ export class Consultant implements ConsultantInterface {
             console.log(key + ' : ' + (retConsultant[key]));
             form_data.append(key, retConsultant[key]);
         }
+
+        //to do : add files to form data
 
         return form_data;
     }
