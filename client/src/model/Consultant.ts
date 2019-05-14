@@ -74,20 +74,23 @@ export class Consultant implements ConsultantInterface {
                 city : consultantInterface.city,
                 postalCode : consultantInterface.postalCode,
                 countryId : consultantInterface.countryId,
-            }
+            },
+            document_identity : consultantInterface.document_identity,
+            document_scolarity_certificate : consultantInterface.document_scolarity_certificate,
+            document_rib : consultantInterface.document_rib,
+            document_vitale_card : consultantInterface.document_vitale_card
         } as ConsultantUpdate;
 
         consultantInterface.phoneNumber? retConsultant.phoneNumber = consultantInterface.phoneNumber : null;
         consultantInterface.outYear? retConsultant.outYear = consultantInterface.outYear : null;
         consultantInterface.line2? retConsultant.address.line2 = consultantInterface.line2 : null;
+        consultantInterface.document_residence_permit? 
+        retConsultant.document_residence_permit = consultantInterface.document_residence_permit : null;
 
         let form_data = new FormData();
         for (let key in retConsultant) {
-            console.log(key + ' : ' + (retConsultant[key]));
             form_data.append(key, retConsultant[key]);
         }
-
-        //to do : add files to form data
 
         return form_data;
     }

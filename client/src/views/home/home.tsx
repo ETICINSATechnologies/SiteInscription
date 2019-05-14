@@ -1,5 +1,4 @@
 import React from 'react';
-import './home.css';
 import Logo from '../../resources/logo_etic_flashy.gif';
 import {Card, Button} from "react-bootstrap";
 

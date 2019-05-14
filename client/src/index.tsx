@@ -8,6 +8,8 @@ import * as serviceWorker from './serviceWorker';
 // views
 import Home from './views/home/home';
 import Inscription from './views/inscription/inscription';
+import Landing_Membre from './views/landing/landing_membre';
+import Landing_Consultant from './views/landing/landing_consultant';
 
 let consultantprops = {isConsultant : true};
 let memberprops = {isConsultant : false};
@@ -23,7 +25,8 @@ ReactDOM.render(
                 <Route exact path='/member' render={(routeProps) => (
                     <Inscription {...routeProps} {...memberprops} />
                 )}/>
-                <Redirect to='/'/>
+                <Route exact path='/landing-membre' component={Landing_Membre}/>
+                <Route exact path='/landing-consultant' component={Landing_Consultant}/>
             </Switch>
         </React.Fragment>
     </Router>

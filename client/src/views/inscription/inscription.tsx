@@ -9,6 +9,7 @@ import { Country } from "../../model/Country";
 import { Pole } from "../../model/Pole";
 import { Gender } from "../../model/Gender";
 
+
 declare global {
   interface Window {
     Stripe: any;
@@ -94,64 +95,44 @@ const Inscription = (props: InscriptionProps) => {
     return data;
   };
 
-
   const handleSubmit = (event: React.FormEvent) => {
-        event.preventDefault();
-        let form_data: FormData = state.person.getFormData(state.person);
+    event.preventDefault();
+    let form_data: FormData = state.person.getFormData(state.person);
+    console.log(form_data)
 
-        if (props.isConsultant) {
-            fetch('api/consultant-inscription', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'multipart/form-data'
-                },
-
-                body: form_data
-            })
-                .then(res => {
-                    if (res.status === 200) {
-                        console.log('success');
-                    } else {
-                        alert('Oh oh, vérifie tes informations');
-                    }
-                });
-        } else {
-            fetch('api/membre-inscription', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'multipart/form-data'
-                },
-
-                body: form_data
-            })
-                .then(res => {
-                    if (res.status === 200) {
-                        console.log('success');
-                        payment();
-                    } else {
-                        alert('Oh oh, vérifie tes informations');
-                    }
-                });
-        }
-      });
-    } else {
-      fetch("sg/membre-inscription", {
-        method: "POST",
-        headers: {
-          "Content-Type": "multipart/form-data"
-        },
-
+    if (props.isConsultant) {
+      fetch('api/consultant-inscription', {
+        method: 'POST',
+        /*headers: {
+          'Content-Type': 'multipart/form-data'
+        },*/
         body: form_data
-      }).then(res => {
-        if (res.status === 201) {
-          console.log("success");
-          payment();
-        } else {
-          alert("Uh oh, vérifie tes informations");
-        }
-      });
+      })
+        .then(res => {
+          if (res.status === 200 || res.status === 201) {
+            console.log('success');
+          } else {
+            alert('Oh oh, vérifie tes informations');
+          }
+        });
+    } else {
+      fetch('api/membre-inscription', {
+        method: 'POST',
+        /*headers: {
+          'Content-Type': 'multipart/form-data'
+        },*/
+        body: form_data
+      })
+        .then(res => {
+          if (res.status === 200 || res.status === 201) {
+            console.log('success');
+            payment();
+          } else {
+            alert('Oh oh, vérifie tes informations');
+          }
+        });
     }
-  };
+  }
 
   const onChange = (event: React.ChangeEvent) => {
     event.persist();
@@ -170,22 +151,32 @@ const Inscription = (props: InscriptionProps) => {
 
   const onChangeFile = (event: React.ChangeEvent) => {
     event.persist();
-
-    //to do
+    let property: string = event.target.className.split(" ")[0];
+    let value = (event.target as HTMLFormElement).value;
+    if (state.person.hasOwnProperty(property)) {
+      setState({
+        ...state,
+        person: {
+          ...state.person,
+          [property]: value
+        }
+      });
+    }
   };
 
   const payment = () => {
-    var stripe = window.Stripe("pk_test_O0FCm2559gZbRpWia2bR0yVm00Qc7SPLU0");
+    var stripe = window.Stripe(process.env.STRIPE_PK);
     stripe
       .redirectToCheckout({
         items: [{ sku: "sku_EuRlqkdKSw1RxK", quantity: 1 }],
-        successUrl: "https://www.google.sc/",
-        cancelUrl: "https://www.google.fr/"
+        successUrl: process.env.SITE_URL +"/landing_membre/",
+        cancelUrl: process.env.SITE_URL
       })
       .then(function (result: any) {
         // If `redirectToCheckout` fails due to a browser or network
         // error, display the localized error message to your customer
-        // using `result.error.message`.
+        // using `result.error.message`
+        result.error.message = 'Il y avait une erreur dans la redirection vers le paiement'
       });
   };
 
@@ -222,10 +213,7 @@ const Inscription = (props: InscriptionProps) => {
         className="container Inscription"
         style={{ backgroundColor: "#005360" }}
       >
-        <Card
-          className="card"
-          style={{ width: "100%", maxWidth: "28rem", margin: "1rem auto" }}
-        >
+        <Card className='card' style={{minHeight: 'min-content', width: '95%', maxWidth: '28rem', margin : 'auto auto' }}>
           <Card.Header style={{ textAlign: "center" }}>
             ETIC INSA Technologies
           </Card.Header>
@@ -405,7 +393,7 @@ const Inscription = (props: InscriptionProps) => {
                     <Form.Control className='document_identity' onChange={onChangeFile as any} type="file" required />
                   </Form.Group>
 
-                  <Form.Group controlId="document_scolary_certificate">
+                  <Form.Group controlId="document_scolarity_certificate">
                     <Form.Label>Certificat de scolarité*</Form.Label>
                     <Form.Control className='document_scolary_certificate' onChange={onChangeFile as any} type="file" required />
                   </Form.Group>
@@ -443,6 +431,17 @@ const Inscription = (props: InscriptionProps) => {
                     </Form.Group>
                   </div>
                 )}
+                <Form.Group style={{ display:'grid', gridTemplateColumns:'1fr 10fr'}} controlId="charte">
+                  <Form.Check
+                      type={'checkbox'} required/>
+                  <Form.Label>
+                    Cliquez ici pour déclarer avoir lu et accepté le 
+                    <a href="https://www.etic-insa.fr/page.php?page=engagement&lang=fr"> règlement intérieur </a> 
+                    ainsi que 
+                    <a href="https://www.etic-insa.fr/page.php?page=engagement&lang=fr"> la charte RSE </a>
+                     d' ETIC INSA Technologies.
+                  </Form.Label>
+                </Form.Group>
 
               <div className="text-center">
                 <Button variant="primary" type="submit">

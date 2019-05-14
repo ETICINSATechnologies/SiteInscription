@@ -1,45 +1,45 @@
 import {Person, PersonUpdate} from "./Person";
 
 export interface MemberInterface extends Person {
-    wantedPoleId : number;
+    wantedPoleId : number
 }
 
 export interface MemberUpdate extends PersonUpdate {
-    wantedPoleId : number;
+    wantedPoleId : number
 }
 
 export class Member implements MemberInterface {
-    firstName: string;
-    lastName: string;
-    genderId: number;
-    birthday: string;
-    departmentId: number;
-    email: string;
-    phoneNumber?: string;
-    outYear?: number;
-    nationalityId: number;
-    wantedPoleId : number;
+    firstName: string
+    lastName: string
+    genderId: number
+    birthday: string
+    departmentId: number
+    email: string
+    phoneNumber?: string
+    outYear?: number
+    nationalityId: number
+    wantedPoleId : number
     line1: string
     line2?: string
     city: string
     postalCode: number
     countryId: number
-    [key: string]: any;
+    [key: string]: any
 
 
     constructor(memberInterface: MemberInterface) {
-        this.firstName = memberInterface.firstName;
-        this.lastName = memberInterface.lastName;
-        this.genderId = memberInterface.genderId;
-        this.birthday = memberInterface.birthday;
-        this.departmentId = memberInterface.departmentId;
-        this.email = memberInterface.email;
-        this.nationalityId = memberInterface.nationalityId;
-        this.wantedPoleId = memberInterface.wantedPoleId;
-        this.line1 = memberInterface.line1;
-        this.city = memberInterface.city;
-        this.postalCode = memberInterface.postalCode;
-        this.countryId = memberInterface.countryId;
+        this.firstName = memberInterface.firstName
+        this.lastName = memberInterface.lastName
+        this.genderId = memberInterface.genderId
+        this.birthday = memberInterface.birthday
+        this.departmentId = memberInterface.departmentId
+        this.email = memberInterface.email
+        this.nationalityId = memberInterface.nationalityId
+        this.wantedPoleId = memberInterface.wantedPoleId
+        this.line1 = memberInterface.line1
+        this.city = memberInterface.city
+        this.postalCode = memberInterface.postalCode
+        this.countryId = memberInterface.countryId
         {memberInterface.phoneNumber? this.phoneNumber = memberInterface.phoneNumber : null}
         {memberInterface.outYear? this.outYear = memberInterface.outYear : null}
         {memberInterface.line2? this.line2 = memberInterface.line2 : null}
@@ -63,16 +63,19 @@ export class Member implements MemberInterface {
             }
         } as MemberUpdate;
 
-        memberInterface.phoneNumber? retMember.phoneNumber = memberInterface.phoneNumber : null;
-        memberInterface.outYear? retMember.outYear = memberInterface.outYear : null;
-        memberInterface.line2? retMember.address.line2 = memberInterface.line2 : null;
+        memberInterface.phoneNumber? retMember.phoneNumber = memberInterface.phoneNumber : null
+        memberInterface.outYear? retMember.outYear = memberInterface.outYear : null
+        memberInterface.line2? retMember.address.line2 = memberInterface.line2 : null
 
-        let form_data = new FormData();
+        let form_data = new FormData()
         for (let key in retMember) {
-            console.log(key + ' : ' + (retMember[key]));
-            form_data.append(key, retMember[key]);
+            console.log(key + ' : ' + (retMember[key]))
+            form_data.append(key, retMember[key])
         }
-        return form_data;
+
+        // add hasPaid
+        form_data.append('hasPaid','false');
+        return form_data
     }
 
 }
@@ -88,4 +91,4 @@ export let defaultMember = new Member({
     city: '',
     postalCode: 0,
     countryId: 0
-} as MemberInterface);
+} as MemberInterface)
