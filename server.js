@@ -4,6 +4,7 @@ const path = require('path')
 const fetch = require('node-fetch')
 const Busboy = require('busboy');
 const bodyParser = require('body-parser');
+const FormData = require('form-data');
 const port = process.env.PORT || 5000
 require('dotenv').config();
 
@@ -39,20 +40,30 @@ app.get('/api/gender', (req, res) => {
 
 app.post('/api/membre-inscription', (req, res) => {
   var busboy = new Busboy({ headers: req.headers });
-  let formData = new Map();
+  let form_data = new FormData();
+  let valid = true;
 
   busboy.on('field', function (fieldname, val) {
-    formData.set(fieldname, val);
+    form_data.append(fieldname, val);
+    if (fieldname === 'hasPaid' && val === 'true') valid = false;
   });
 
   busboy.on("finish", function () {
-    if (formData.get('hasPaid') === 'false') {
+    if (valid) {
       fetch((process.env.API_HOST + '/api/v1/sg/membre-inscription'), {
         method: 'POST',
-        body: req.body,
+        body: form_data,
         headers: { Authorization: api_token }
       }).then(response => {
-        res.status(response.status).end()
+        if (response.status === 201) {
+          response.json()
+            .then(data => {
+              res.send(data).end();
+            }
+            )
+        } else {
+          res.status(response.status).end();
+        }
       })
     } else {
       res.status(401).end();
@@ -165,7 +176,7 @@ const getGenders = async () => {
 
 const handleCheckoutSession = (session) => {
   console.log('Stripe checkout session received from ' + session.client_reference_id);
-  responseBody = { hasPaid: true }/*
+  responseBody = { hasPaid: true }
   fetch((process.env.API_HOST + '/api/v1/sg/membre-inscription/' + session.client_reference_id), {
     method: 'PUT',
     headers: {
@@ -173,7 +184,7 @@ const handleCheckoutSession = (session) => {
       Authorization: api_token
     },
     body: JSON.stringify(responseBody)
-  })*/
+  })
 }
 
 //start server

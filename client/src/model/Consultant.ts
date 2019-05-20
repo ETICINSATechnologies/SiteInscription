@@ -1,4 +1,4 @@
-import {Person, PersonUpdate} from "./Person";
+import { Person, PersonUpdate } from "./Person";
 
 export interface ConsultantInterface extends Person {
     document_identity: File
@@ -54,38 +54,38 @@ export class Consultant implements ConsultantInterface {
         this.document_scolarity_certificate = consultantInterface.document_scolarity_certificate;
         this.document_rib = consultantInterface.document_rib;
         this.document_vitale_card = consultantInterface.document_vitale_card;
-        {consultantInterface.phoneNumber? this.phoneNumber = consultantInterface.phoneNumber : null}
-        {consultantInterface.outYear? this.outYear = consultantInterface.outYear : null}
-        {consultantInterface.document_residence_permit? this.document_residence_permit = consultantInterface.document_residence_permit : null}
-        {consultantInterface.line2? this.line2 = consultantInterface.line2 : null}
+        { consultantInterface.phoneNumber ? this.phoneNumber = consultantInterface.phoneNumber : null }
+        { consultantInterface.outYear ? this.outYear = consultantInterface.outYear : null }
+        { consultantInterface.document_residence_permit ? this.document_residence_permit = consultantInterface.document_residence_permit : null }
+        { consultantInterface.line2 ? this.line2 = consultantInterface.line2 : null }
     }
 
     getFormData = (consultantInterface: ConsultantInterface) => {
-        let retConsultant : ConsultantUpdate = {
-            firstName : consultantInterface.firstName,
-            lastName : consultantInterface.lastName,
-            genderId : consultantInterface.genderId,
-            birthday : consultantInterface.birthday,
-            departmentId : consultantInterface.departmentId,
-            email : consultantInterface.email,
-            nationalityId : consultantInterface.nationalityId,
-            address : {
-                line1 : consultantInterface.line1,
-                city : consultantInterface.city,
-                postalCode : consultantInterface.postalCode,
-                countryId : consultantInterface.countryId,
+        let retConsultant: ConsultantUpdate = {
+            firstName: consultantInterface.firstName,
+            lastName: consultantInterface.lastName,
+            genderId: consultantInterface.genderId,
+            birthday: consultantInterface.birthday,
+            departmentId: consultantInterface.departmentId,
+            email: consultantInterface.email,
+            nationalityId: consultantInterface.nationalityId,
+            address: {
+                line1: consultantInterface.line1,
+                city: consultantInterface.city,
+                postalCode: consultantInterface.postalCode,
+                countryId: consultantInterface.countryId,
             },
-            document_identity : consultantInterface.document_identity,
-            document_scolarity_certificate : consultantInterface.document_scolarity_certificate,
-            document_rib : consultantInterface.document_rib,
-            document_vitale_card : consultantInterface.document_vitale_card
+            document_identity: consultantInterface.document_identity,
+            document_scolarity_certificate: consultantInterface.document_scolarity_certificate,
+            document_rib: consultantInterface.document_rib,
+            document_vitale_card: consultantInterface.document_vitale_card
         } as ConsultantUpdate;
 
-        consultantInterface.phoneNumber? retConsultant.phoneNumber = consultantInterface.phoneNumber : null;
-        consultantInterface.outYear? retConsultant.outYear = consultantInterface.outYear : null;
-        consultantInterface.line2? retConsultant.address.line2 = consultantInterface.line2 : null;
-        consultantInterface.document_residence_permit? 
-        retConsultant.document_residence_permit = consultantInterface.document_residence_permit : null;
+        consultantInterface.phoneNumber ? retConsultant.phoneNumber = consultantInterface.phoneNumber : null;
+        consultantInterface.outYear ? retConsultant.outYear = consultantInterface.outYear : null;
+        consultantInterface.line2 ? retConsultant.address.line2 = consultantInterface.line2 : null;
+        consultantInterface.document_residence_permit ?
+            retConsultant.document_residence_permit = consultantInterface.document_residence_permit : null;
 
         let form_data = new FormData();
         for (let key in retConsultant) {
@@ -107,9 +107,9 @@ export let defaultConsultant = new Consultant({
     postalCode: 0,
     countryId: 0,
 
-/*    document_identity: new File([""], "idDoc"),
-    document_scolarity_certificate: new File([""], "scolDoc"),
-    document_rib: new File([""], "ribDoc"),
-    document_vitale_card: new File([""], "vitaleDoc"),*/
+    /*    document_identity: new File([""], "idDoc"),
+        document_scolarity_certificate: new File([""], "scolDoc"),
+        document_rib: new File([""], "ribDoc"),
+        document_vitale_card: new File([""], "vitaleDoc"),*/
 
 } as ConsultantInterface);

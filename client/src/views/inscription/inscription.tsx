@@ -103,9 +103,6 @@ const Inscription = (props: InscriptionProps) => {
     if (props.isConsultant) {
       fetch('api/consultant-inscription', {
         method: 'POST',
-        /*headers: {
-          'Content-Type': 'multipart/form-data'
-        },*/
         body: form_data
       })
         .then(res => {
@@ -118,15 +115,14 @@ const Inscription = (props: InscriptionProps) => {
     } else {
       fetch('api/membre-inscription', {
         method: 'POST',
-        /*headers: {
-          'Content-Type': 'multipart/form-data'
-        },*/
         body: form_data
       })
         .then(res => {
-          if (res.status === 200 || res.status === 201) {
-            console.log('success');
-            payment();
+          if (res.status === 200) {
+            res.json().then(member => {
+              payment(member);
+            }
+            )
           } else {
             alert('Oh oh, vérifie tes informations');
           }
@@ -164,13 +160,15 @@ const Inscription = (props: InscriptionProps) => {
     }
   };
 
-  const payment = () => {
-    var stripe = window.Stripe(process.env.STRIPE_PK);
+  const payment = (member: any) => {
+    var stripe = window.Stripe(process.env.REACT_APP_STRIPE_PK);
     stripe
       .redirectToCheckout({
         items: [{ sku: "sku_EuRlqkdKSw1RxK", quantity: 1 }],
-        successUrl: process.env.SITE_URL +"/landing_membre/",
-        cancelUrl: process.env.SITE_URL
+        successUrl: process.env.REACT_APP_SITE_URL + "/landing_membre/",
+        cancelUrl: process.env.REACT_APP_SITE_URL,
+        clientReferenceId: member.id.toString(),
+        customerEmail: member.email
       })
       .then(function (result: any) {
         // If `redirectToCheckout` fails due to a browser or network
@@ -209,11 +207,8 @@ const Inscription = (props: InscriptionProps) => {
 
   return (
     <React.Fragment>
-      <div
-        className="container Inscription"
-        style={{ backgroundColor: "#005360" }}
-      >
-        <Card className='card' style={{minHeight: 'min-content', width: '95%', maxWidth: '28rem', margin : 'auto auto' }}>
+      <div className="container Inscription" style={{ backgroundColor: "#005360", paddingTop: '1em', paddingBottom: '1em' }} >
+        <Card className='card' style={{ minHeight: 'min-content', width: '95%', maxWidth: '28rem', margin: 'auto auto' }}>
           <Card.Header style={{ textAlign: "center" }}>
             ETIC INSA Technologies
           </Card.Header>
@@ -431,17 +426,17 @@ const Inscription = (props: InscriptionProps) => {
                     </Form.Group>
                   </div>
                 )}
-                <Form.Group style={{ display:'grid', gridTemplateColumns:'1fr 10fr'}} controlId="charte">
-                  <Form.Check
-                      type={'checkbox'} required/>
-                  <Form.Label>
-                    Cliquez ici pour déclarer avoir lu et accepté le 
-                    <a href="https://www.etic-insa.fr/page.php?page=engagement&lang=fr"> règlement intérieur </a> 
-                    ainsi que 
+              <Form.Group style={{ display: 'grid', gridTemplateColumns: '1fr 10fr' }} controlId="charte">
+                <Form.Check
+                  type={'checkbox'} required />
+                <Form.Label>
+                  Cliquez ici pour déclarer avoir lu et accepté le
+                    <a href="https://www.etic-insa.fr/page.php?page=engagement&lang=fr"> règlement intérieur </a>
+                  ainsi que
                     <a href="https://www.etic-insa.fr/page.php?page=engagement&lang=fr"> la charte RSE </a>
-                     d' ETIC INSA Technologies.
+                  d' ETIC INSA Technologies.
                   </Form.Label>
-                </Form.Group>
+              </Form.Group>
 
               <div className="text-center">
                 <Button variant="primary" type="submit">

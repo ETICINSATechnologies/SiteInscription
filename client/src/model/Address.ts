@@ -7,9 +7,9 @@ interface AddressDefault {
     postalCode: number
 }
 
-export interface AddressUpdate extends AddressDefault {
+/*export interface AddressUpdate extends AddressDefault {
     countryId: number
-}
+}*/
 
 export interface Address extends AddressDefault {
     country: Country
