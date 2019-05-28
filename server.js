@@ -176,14 +176,12 @@ const getGenders = async () => {
 
 const handleCheckoutSession = (session) => {
   console.log('Stripe checkout session received from ' + session.client_reference_id);
-  responseBody = { hasPaid: true }
-  fetch((process.env.API_HOST + '/api/v1/sg/membre-inscription/' + session.client_reference_id), {
-    method: 'PUT',
+  fetch((process.env.API_HOST + '/api/v1/sg/membre-inscription/' + session.client_reference_id + '/confirm-payment'), {
+    method: 'POST',
     headers: {
       'Content-Type': 'application/json',
       Authorization: api_token
-    },
-    body: JSON.stringify(responseBody)
+    }
   })
 }
 
