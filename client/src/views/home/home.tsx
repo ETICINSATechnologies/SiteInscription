@@ -8,7 +8,7 @@ const Home = () => {
     return (
         <React.Fragment>
             <div className='container Home' style={{ backgroundColor: '#005360', height: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                <Card className='card' style={{ width: '95%', maxWidth: '28rem', margin: 'auto auto' }}>
+                <Card className='card' style={{ width: '100%', maxWidth: '500px', margin: 'auto auto' }}>
                     <Card.Header>ETIC INSA Technologies</Card.Header>
                     <Card.Body style={{ textAlign: 'center' }}>
                         <Card.Title>Inscription</Card.Title>

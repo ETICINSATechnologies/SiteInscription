@@ -98,7 +98,6 @@ const Inscription = (props: InscriptionProps) => {
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
     let form_data: FormData = state.person.getFormData(state.person);
-    console.log(form_data)
 
     if (props.isConsultant) {
       fetch('api/consultant-inscription', {
@@ -178,10 +177,11 @@ const Inscription = (props: InscriptionProps) => {
       });
   };
 
-  const makeOptions = (objectArray: any[]) =>
+  const makeOptions = (objectArray: any[], defaultValue?: number) =>
     objectArray.map((option: any, index: any) => {
       return (
-        <option key={index} value={option.id}>
+        <option key={index} value={option.id}
+          selected={defaultValue && option.id === defaultValue ? true : false}>
           {option.name ? option.name : option.label}
         </option>
       );
@@ -208,7 +208,7 @@ const Inscription = (props: InscriptionProps) => {
   return (
     <React.Fragment>
       <div className="container Inscription" style={{ backgroundColor: "#005360", paddingTop: '1em', paddingBottom: '1em' }} >
-        <Card className='card' style={{ minHeight: 'min-content', width: '95%', maxWidth: '28rem', margin: 'auto auto' }}>
+        <Card className='card' style={{ minHeight: 'min-content', width: '100%', maxWidth: '600px', margin: 'auto auto' }}>
           <Card.Header style={{ textAlign: "center" }}>
             ETIC INSA Technologies
           </Card.Header>
@@ -322,7 +322,7 @@ const Inscription = (props: InscriptionProps) => {
                   onChange={onChange as any}
                   required
                 >
-                  {makeOptions(metaInfo.countries)}
+                  {makeOptions(metaInfo.countries, 62)}
                 </Form.Control>
               </Form.Group>
 
@@ -376,7 +376,7 @@ const Inscription = (props: InscriptionProps) => {
                   onChange={onChange as any}
                   required
                 >
-                  {makeOptions(metaInfo.countries)}
+                  {makeOptions(metaInfo.countries, 62)}
                 </Form.Control>
               </Form.Group>
 
