@@ -163,7 +163,7 @@ const Inscription = (props: InscriptionProps) => {
     var stripe = window.Stripe(process.env.REACT_APP_STRIPE_PK);
     stripe
       .redirectToCheckout({
-        items: [{ sku: "sku_EuRlqkdKSw1RxK", quantity: 1 }],
+        items: [{ sku: process.env.REACT_APP_STRIPE_PRODUCT, quantity: 1 }],
         successUrl: process.env.REACT_APP_SITE_URL + "/landing-membre/",
         cancelUrl: process.env.REACT_APP_SITE_URL,
         clientReferenceId: member.id.toString(),
