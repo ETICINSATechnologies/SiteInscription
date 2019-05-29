@@ -165,7 +165,7 @@ const Inscription = (props: InscriptionProps) => {
     stripe
       .redirectToCheckout({
         items: [{ sku: "sku_EuRlqkdKSw1RxK", quantity: 1 }],
-        successUrl: process.env.REACT_APP_SITE_URL + "/landing_membre/",
+        successUrl: process.env.REACT_APP_SITE_URL + "/landing-membre/",
         cancelUrl: process.env.REACT_APP_SITE_URL,
         clientReferenceId: member.id.toString(),
         customerEmail: member.email

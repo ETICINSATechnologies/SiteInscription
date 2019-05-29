@@ -26,7 +26,7 @@ const Landing_Membre = () => {
                             Vous avez bien été inscrit comme membre à ETIC INSA Technologies
                         </Card.Text>
                         <Card.Text>
-                            Veuillez-complétéz la fiche d'inscription ci-dessous et la renvoyez à secretaire.generale@etic-insa.com
+                            Veuillez-complétéz la fiche d'inscription ci-dessous et la renvoyez à secretaire.general@etic-insa.com
                         </Card.Text>
                         <Card.Text>
                             <Nav.Item>
