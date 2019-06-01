@@ -2,10 +2,12 @@ import { Person, PersonUpdate } from "./Person";
 
 export interface MemberInterface extends Person {
     wantedPoleId: number
+    droitImage: boolean
 }
 
 export interface MemberUpdate extends PersonUpdate {
     wantedPoleId: number
+    droitImage: boolean
 }
 
 export class Member implements MemberInterface {
@@ -24,6 +26,7 @@ export class Member implements MemberInterface {
     city: string
     postalCode: number
     countryId: number
+    droitImage: boolean
     [key: string]: any
 
 
@@ -40,6 +43,7 @@ export class Member implements MemberInterface {
         this.city = memberInterface.city
         this.postalCode = memberInterface.postalCode
         this.countryId = memberInterface.countryId
+        this.droitImage = memberInterface.droitImage
         { memberInterface.phoneNumber ? this.phoneNumber = memberInterface.phoneNumber : null }
         { memberInterface.outYear ? this.outYear = memberInterface.outYear : null }
         { memberInterface.line2 ? this.line2 = memberInterface.line2 : null }
@@ -55,12 +59,7 @@ export class Member implements MemberInterface {
             email: memberInterface.email,
             nationalityId: memberInterface.nationalityId,
             wantedPoleId: memberInterface.wantedPoleId,
-            /*address: {
-                line1: memberInterface.line1,
-                city: memberInterface.city,
-                postalCode: memberInterface.postalCode,
-                countryId: memberInterface.countryId,
-            },*/
+            droitImage: memberInterface.droitImage,
             'address[line1]' :  memberInterface.line1,
             'address[city]' :  memberInterface.city,
             'address[postalCode]' :  memberInterface.postalCode,
@@ -87,12 +86,14 @@ export class Member implements MemberInterface {
 export let defaultMember = new Member({
     firstName: '',
     lastName: '',
-    departmentId: 0,
+    departmentId: 1,
     email: '',
-    nationalityId: 0,
-    wantedPoleId: 0,
+    nationalityId: 62,
+    wantedPoleId: 1,
     line1: '',
     city: '',
     postalCode: 0,
-    countryId: 0
+    countryId: 62,
+    genderId: 3,
+    droitImage: false
 } as MemberInterface)

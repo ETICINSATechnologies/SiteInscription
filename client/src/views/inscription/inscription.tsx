@@ -144,6 +144,21 @@ const Inscription = (props: InscriptionProps) => {
     }
   };
 
+  const onChangeDroitImage = (event: React.ChangeEvent) => {
+    event.persist();
+    let property: string = 'droitImage';
+    let value = !state.person.droitImage;
+    if (state.person.hasOwnProperty(property)) {
+      setState({
+        ...state,
+        person: {
+          ...state.person,
+          [property]: value
+        }
+      });
+    }
+  }
+
   const onChangeFile = (event: React.ChangeEvent) => {
     event.persist();
     let property: string = event.target.className.split(" ")[0];
@@ -220,7 +235,7 @@ const Inscription = (props: InscriptionProps) => {
             </Card.Title>
             <Form onSubmit={handleSubmit}>
               <Form.Group controlId="firstName">
-                <Form.Label>Prénom*</Form.Label>
+                <Form.Label className="required">Prénom</Form.Label>
                 <Form.Control
                   className="firstName"
                   type="text"
@@ -233,7 +248,7 @@ const Inscription = (props: InscriptionProps) => {
               </Form.Group>
 
               <Form.Group controlId="lastName">
-                <Form.Label>Nom de famille*</Form.Label>
+                <Form.Label className="required">Nom de famille</Form.Label>
                 <Form.Control
                   className="lastName"
                   type="text"
@@ -246,19 +261,19 @@ const Inscription = (props: InscriptionProps) => {
               </Form.Group>
 
               <Form.Group controlId="genderId">
-                <Form.Label>Genre*</Form.Label>
+                <Form.Label className="required">Genre</Form.Label>
                 <Form.Control
                   className="genderId"
                   as="select"
                   onChange={onChange as any}
                   required
                 >
-                  {makeOptions(metaInfo.genders)};
+                  {makeOptions(metaInfo.genders, 3)};
                 </Form.Control>
               </Form.Group>
 
               <Form.Group controlId="birthday">
-                <Form.Label>Date de naissance*</Form.Label>
+                <Form.Label className="required">Date de naissance</Form.Label>
                 <Form.Control
                   className="birthday"
                   type="date"
@@ -269,7 +284,7 @@ const Inscription = (props: InscriptionProps) => {
               </Form.Group>
 
               <Form.Group controlId="email">
-                <Form.Label>Adresse mail*</Form.Label>
+                <Form.Label className="required">Adresse mail</Form.Label>
                 <Form.Control
                   className="email"
                   type="text"
@@ -281,7 +296,7 @@ const Inscription = (props: InscriptionProps) => {
               </Form.Group>
 
               <Form.Group controlId="departmentId">
-                <Form.Label>Departement*</Form.Label>
+                <Form.Label className="required">Departement</Form.Label>
                 <Form.Control
                   className="departmentId"
                   as="select"
@@ -315,7 +330,7 @@ const Inscription = (props: InscriptionProps) => {
               </Form.Group>
 
               <Form.Group controlId="nationalityId">
-                <Form.Label>Nationalité*</Form.Label>
+                <Form.Label className="required">Nationalité</Form.Label>
                 <Form.Control
                   className="nationalityId"
                   as="select"
@@ -327,7 +342,7 @@ const Inscription = (props: InscriptionProps) => {
               </Form.Group>
 
               <Form.Group controlId="line1">
-                <Form.Label>Adresse*</Form.Label>
+                <Form.Label className="required">Adresse</Form.Label>
                 <Form.Control
                   className="line1"
                   onChange={onChange as any}
@@ -347,7 +362,7 @@ const Inscription = (props: InscriptionProps) => {
               </Form.Group>
 
               <Form.Group controlId="city">
-                <Form.Label>Ville*</Form.Label>
+                <Form.Label className="required">Ville</Form.Label>
                 <Form.Control
                   className="city"
                   onChange={onChange as any}
@@ -358,7 +373,7 @@ const Inscription = (props: InscriptionProps) => {
               </Form.Group>
 
               <Form.Group controlId="postalCode">
-                <Form.Label>Code postal*</Form.Label>
+                <Form.Label className="required">Code postal</Form.Label>
                 <Form.Control
                   className="postalCode"
                   onChange={onChange as any}
@@ -369,7 +384,7 @@ const Inscription = (props: InscriptionProps) => {
               </Form.Group>
 
               <Form.Group controlId="countryId">
-                <Form.Label>Pays*</Form.Label>
+                <Form.Label className="required">Pays</Form.Label>
                 <Form.Control
                   className="countryId"
                   as="select"
@@ -384,22 +399,22 @@ const Inscription = (props: InscriptionProps) => {
                 // all consultant specific fields here
                 <div className="consultantSpecific">
                   <Form.Group controlId="document_identity">
-                    <Form.Label>Pièce d'identité*</Form.Label>
+                    <Form.Label className="required">Pièce d'identité</Form.Label>
                     <Form.Control className='document_identity' onChange={onChangeFile as any} type="file" required />
                   </Form.Group>
 
                   <Form.Group controlId="document_scolarity_certificate">
-                    <Form.Label>Certificat de scolarité*</Form.Label>
+                    <Form.Label className="required">Certificat de scolarité</Form.Label>
                     <Form.Control className='document_scolary_certificate' onChange={onChangeFile as any} type="file" required />
                   </Form.Group>
 
                   <Form.Group controlId="document_vitale_card">
-                    <Form.Label>Carte Vitale*</Form.Label>
+                    <Form.Label className="required">Carte Vitale</Form.Label>
                     <Form.Control className='document_vitale_card' onChange={onChangeFile as any} type="file" required />
                   </Form.Group>
 
                   <Form.Group controlId="document_rib">
-                    <Form.Label>RIB*</Form.Label>
+                    <Form.Label className="required">RIB</Form.Label>
                     <Form.Control className='document_rib' onChange={onChangeFile as any} type="file" required />
                   </Form.Group>
 
@@ -414,7 +429,7 @@ const Inscription = (props: InscriptionProps) => {
                   // all member specific fields here
                   <div className="memberSpecific">
                     <Form.Group controlId="wantedPoleId">
-                      <Form.Label>Pôle*</Form.Label>
+                      <Form.Label className="required">Pôle</Form.Label>
                       <Form.Control
                         className="wantedPoleId"
                         as="select"
@@ -424,16 +439,26 @@ const Inscription = (props: InscriptionProps) => {
                         {makeOptions(metaInfo.poles)}
                       </Form.Control>
                     </Form.Group>
+                    <Form.Group style={{ display: 'grid', gridTemplateColumns: '1fr 10fr' }} controlId="charte">
+                      <Form.Check
+                        className="droitImage"
+                        type={'checkbox'}
+                        onChange={onChangeDroitImage as any} />
+                      <Form.Label>
+                        Je déclare avoir lu les
+                        <a href="/reglement" target="_blank"> règlements par rapport à la droit à l'image </a>
+                      </Form.Label>
+                    </Form.Group>
                   </div>
                 )}
               <Form.Group style={{ display: 'grid', gridTemplateColumns: '1fr 10fr' }} controlId="charte">
                 <Form.Check
                   type={'checkbox'} required />
-                <Form.Label>
-                  Cliquez ici pour déclarer avoir lu et accepté le
-                    <a href="https://www.etic-insa.fr/page.php?page=engagement&lang=fr"> règlement intérieur </a>
+                <Form.Label className="required">
+                  Je déclare avoir lu et accepté le
+                    <a href="/reglement" target="_blank"> règlement intérieur </a>
                   ainsi que
-                    <a href="https://www.etic-insa.fr/page.php?page=engagement&lang=fr"> la charte RSE </a>
+                    <a href="/reglement" target="_blank"> la charte RSE </a>
                   d' ETIC INSA Technologies.
                   </Form.Label>
               </Form.Group>

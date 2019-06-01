@@ -99,13 +99,14 @@ export class Consultant implements ConsultantInterface {
 export let defaultConsultant = new Consultant({
     firstName: '',
     lastName: '',
-    departmentId: 0,
+    departmentId: 1,
     email: '',
-    nationalityId: 0,
+    nationalityId: 62,
     line1: '',
     city: '',
     postalCode: 0,
-    countryId: 0,
+    countryId: 62,
+    genderId: 3,
 
     /*    document_identity: new File([""], "idDoc"),
         document_scolarity_certificate: new File([""], "scolDoc"),

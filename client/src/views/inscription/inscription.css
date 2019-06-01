@@ -5,3 +5,8 @@
 .Inscription Form.Control:invalid{
     border: 2px dashed red;
 }
+
+.Inscription .required:after {
+    content: "*";
+    color: red;
+}

@@ -10,6 +10,7 @@ import Home from './views/home/home';
 import Inscription from './views/inscription/inscription';
 import Landing_Membre from './views/landing/landing_membre';
 import Landing_Consultant from './views/landing/landing_consultant';
+import Reglement from './views/reglement/reglement';
 
 let consultantprops = {isConsultant : true};
 let memberprops = {isConsultant : false};
@@ -27,6 +28,7 @@ ReactDOM.render(
                 )}/>
                 <Route exact path='/landing-membre' component={Landing_Membre}/>
                 <Route exact path='/landing-consultant' component={Landing_Consultant}/>
+                <Route exact path='/reglement' component={Reglement}/>
             </Switch>
         </React.Fragment>
     </Router>
