@@ -44,9 +44,9 @@ export class Member implements MemberInterface {
         this.postalCode = memberInterface.postalCode
         this.countryId = memberInterface.countryId
         this.droitImage = memberInterface.droitImage
-        { memberInterface.phoneNumber ? this.phoneNumber = memberInterface.phoneNumber : null }
-        { memberInterface.outYear ? this.outYear = memberInterface.outYear : null }
-        { memberInterface.line2 ? this.line2 = memberInterface.line2 : null }
+        if (memberInterface.phoneNumber) this.phoneNumber = memberInterface.phoneNumber
+        if (memberInterface.outYear) this.outYear = memberInterface.outYear
+        if (memberInterface.line2) this.line2 = memberInterface.line2
     }
 
     getFormData = (memberInterface: MemberInterface) => {
@@ -67,9 +67,9 @@ export class Member implements MemberInterface {
 
         } as MemberUpdate;
 
-        memberInterface.phoneNumber ? retMember.phoneNumber = memberInterface.phoneNumber : null
-        memberInterface.outYear ? retMember.outYear = memberInterface.outYear : null
-        memberInterface.line2 ? retMember['address[line2'] = memberInterface.line2 : null
+        if(memberInterface.phoneNumber) retMember.phoneNumber = memberInterface.phoneNumber
+        if(memberInterface.outYear) retMember.outYear = memberInterface.outYear
+        if(memberInterface.line2) retMember['address[line2'] = memberInterface.line2
 
         let form_data = new FormData()
         for (let key in retMember) {

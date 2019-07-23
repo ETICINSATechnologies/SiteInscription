@@ -52,13 +52,13 @@ const Inscription = (props: InscriptionProps) => {
     let gendersTemp: Gender[];
 
     getDepartments().then(data => {
-      data ? departmentsTemp = data : null
+      if(data) departmentsTemp = data
       getCountries().then(data => {
-        data ? countriesTemp = data : null
+        if(data) countriesTemp = data
         getPoles().then(data => {
-          data ? polesTemp = data : null
+          if(data) polesTemp = data
           getGenders().then(data => {
-            data ? gendersTemp = data : null
+            if(data) gendersTemp = data
             setMetaInfo({
               poles: polesTemp,
               departments: departmentsTemp,

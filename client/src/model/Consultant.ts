@@ -54,10 +54,10 @@ export class Consultant implements ConsultantInterface {
         this.document_scolarity_certificate = consultantInterface.document_scolarity_certificate;
         this.document_rib = consultantInterface.document_rib;
         this.document_vitale_card = consultantInterface.document_vitale_card;
-        { consultantInterface.phoneNumber ? this.phoneNumber = consultantInterface.phoneNumber : null }
-        { consultantInterface.outYear ? this.outYear = consultantInterface.outYear : null }
-        { consultantInterface.document_residence_permit ? this.document_residence_permit = consultantInterface.document_residence_permit : null }
-        { consultantInterface.line2 ? this.line2 = consultantInterface.line2 : null }
+        if(consultantInterface.phoneNumber) this.phoneNumber = consultantInterface.phoneNumber
+        if(consultantInterface.outYear) this.outYear = consultantInterface.outYear
+        if(consultantInterface.document_residence_permit) this.document_residence_permit = consultantInterface.document_residence_permit
+        if(consultantInterface.line2) this.line2 = consultantInterface.line2
     }
 
     getFormData = (consultantInterface: ConsultantInterface) => {
@@ -81,11 +81,10 @@ export class Consultant implements ConsultantInterface {
             document_vitale_card: consultantInterface.document_vitale_card
         } as ConsultantUpdate;
 
-        consultantInterface.phoneNumber ? retConsultant.phoneNumber = consultantInterface.phoneNumber : null;
-        consultantInterface.outYear ? retConsultant.outYear = consultantInterface.outYear : null;
-        consultantInterface.line2 ? retConsultant.address.line2 = consultantInterface.line2 : null;
-        consultantInterface.document_residence_permit ?
-            retConsultant.document_residence_permit = consultantInterface.document_residence_permit : null;
+        if (consultantInterface.phoneNumber) retConsultant.phoneNumber = consultantInterface.phoneNumber
+        if (consultantInterface.outYear) retConsultant.outYear = consultantInterface.outYear
+        if (consultantInterface.line2) retConsultant.address.line2 = consultantInterface.line2
+        if (consultantInterface.document_residence_permit) retConsultant.document_residence_permit = consultantInterface.document_residence_permit
 
         let form_data = new FormData();
         for (let key in retConsultant) {
