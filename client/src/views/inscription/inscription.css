@@ -1,12 +1,12 @@
-.Inscription Form.Control:valid{
+Form.Control:valid{
     border: 2px solid black;
 }
 
-.Inscription Form.Control:invalid{
+Form.Control:invalid{
     border: 2px dashed red;
 }
 
-.Inscription .required:after {
+.required:after {
     content: "*";
     color: red;
 }
