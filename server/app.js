@@ -18,13 +18,12 @@ const endpointSecret = process.env.STRIPE_EP_SK;
 
 /* Static File Declaration */
 
-app.use(express.static(path.join(__dirname, 'client/build')));
+app.use(express.static(path.join(__dirname, '../client/build')));
 
 /* Routes */
 
 app.get('/api/file/:filename', (req, res) => {
-  const path = `./files/${req.params.filename}.pdf`;
-  console.log('getting request with ' + path)
+  const path = `../files/${req.params.filename}.pdf`;
   fs.access(path, fs.F_OK, (err) => {
     if (err) {
       res.status(404).end()
@@ -105,14 +104,14 @@ app.post('/api/webhook', bodyParser.raw({ type: 'application/json' }), (req, res
 });
 
 if (process.env.NODE_ENV === 'production') {
-  app.use(express.static(path.join(__dirname, 'client/build')));
+  app.use(express.static(path.join(__dirname, '../client/build')));
   //
   app.get('/*', (req, res) => {
-    res.sendFile(path.join(__dirname + '/client/build/index.html'));
+    res.sendFile(path.join(__dirname + '../client/build/index.html'));
   })
 } else {
   app.get('/*', (req, res) => {
-    res.sendFile(path.join(__dirname + '/client/public/index.html'));
+    res.sendFile(path.join(__dirname + '../client/public/index.html'));
   })
 }
 

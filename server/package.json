@@ -5,12 +5,11 @@
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "client-install": "npm install --prefix client",
+    "client-install": "npm install --prefix ../client",
     "start": "node server.js",
-    "server": "nodemon server.js",
-    "client": "npm start --prefix client",
+    "client": "npm start --prefix ../client",
     "dev": "concurrently \"npm run server\" \"npm run client\"",
-    "prod": "concurrently \"npm run-script build --prefix client\" \"npm run server\""
+    "prod": "concurrently \"npm run build --prefix ../client\" \"npm run server\""
   },
   "author": "Sadsitha Lokuge",
   "license": "ISC",

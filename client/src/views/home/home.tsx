@@ -19,7 +19,7 @@ const Home = () => {
                         Devenir Membre Actif
                     </Button>
                 </Link>
-                <Link to="/member">
+                <Link to="/consultant">
                     <Button variant="primary" className="full-width" style={{ margin: '0.2rem auto 1rem auto' }}>
                         Devenir Consultant
                     </Button>

@@ -12,7 +12,6 @@ body, html {
   background-color: #005360;
   width: 100%;
   min-height: 100%;
-  overflow: scroll;
   display: flex;
   align-items: center;
   justify-content: center;
