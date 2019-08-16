@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
-import {Redirect, Switch} from "react-router";
+import {Switch} from "react-router";
 import { BrowserRouter as Router, Route} from "react-router-dom";
 import * as serviceWorker from './serviceWorker';
 
@@ -10,7 +10,6 @@ import Home from './views/home/home';
 import Inscription from './views/inscription/inscription';
 import Landing_Membre from './views/landing/landing_membre';
 import Landing_Consultant from './views/landing/landing_consultant';
-import Reglement from './views/reglement/reglement';
 
 let consultantprops = {isConsultant : true};
 let memberprops = {isConsultant : false};
@@ -26,9 +25,8 @@ ReactDOM.render(
                 <Route exact path='/member' render={(routeProps) => (
                     <Inscription {...routeProps} {...memberprops} />
                 )}/>
-                <Route exact path='/landing-membre' component={Landing_Membre}/>
+                <Route exact path='/landing-member' component={Landing_Membre}/>
                 <Route exact path='/landing-consultant' component={Landing_Consultant}/>
-                <Route exact path='/reglement' component={Reglement}/>
             </Switch>
         </React.Fragment>
     </Router>

@@ -10,3 +10,7 @@
     content: "*";
     color: red;
 }
+
+.background-is-white {
+    background-color: white;
+}

@@ -1,44 +1,22 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { Card, Nav } from "react-bootstrap";
 import Logo from '../../resources/logo_etic_flashy.gif';
 
-interface LandingState {
-    hasPaid: boolean
-}
-
 const Landing_Membre = () => {
-    const [state, setState] = useState({
-        hasPaid: false
-    } as LandingState);
-
-    useEffect(() => {
-
-    }, []);
 
     return (
-        <React.Fragment>
-            <div className='container Landing' style={{ backgroundColor: '#005360', height: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                <Card className='card' style={{ width: '100%', maxWidth: '500px', margin: 'auto auto' }}>
-                    <Card.Header>ETIC INSA Technologies</Card.Header>
-                    <Card.Body style={{ textAlign: 'center' }}>
-                        <Card.Title>Inscription</Card.Title>
-                        <Card.Text>
-                            Vous avez bien été inscrit comme membre à ETIC INSA Technologies
-                        </Card.Text>
-                        <Card.Text>
-                            Veuillez-complétéz la fiche d'inscription ci-dessous et la renvoyez à secretaire.general@etic-insa.com
-                        </Card.Text>
-                        <Card.Text>
-                            <Nav.Item>
-                                <Nav.Link href="/api/fiche-inscription">Fiche d'inscription</Nav.Link>
-                            </Nav.Item>
-                        </Card.Text>
-                        <Card.Img src={Logo} alt='logo etic' className='logo'
-                            style={{ width: '50px', filter: 'contrast(1.25)' }} />
-                    </Card.Body>
-                </Card>
-            </div>
-        </React.Fragment>
+        <Card className='card has-max-width-500'>
+            <Card.Header>ETIC INSA Technologies</Card.Header>
+            <Card.Body className='text-center'>
+                <Card.Title>Inscription</Card.Title>
+                <Card.Text>Vous avez bien été inscrit comme membre à ETIC INSA Technologies</Card.Text>
+                <Card.Text>Veuillez-compléter la fiche d'inscription ci-dessous et la renvoyer à secretaire.general@etic-insa.com</Card.Text>
+                <Nav.Item>
+                    <Nav.Link href="/api/file/fiche_inscription_membre">Fiche d'inscription</Nav.Link>
+                </Nav.Item>
+                <Card.Img src={Logo} alt='logo etic' className='logo' />
+            </Card.Body>
+        </Card>
     );
 }
 

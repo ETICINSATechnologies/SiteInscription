@@ -5,6 +5,7 @@ export interface ConsultantInterface extends Person {
     document_scolarity_certificate: File
     document_rib: File
     document_vitale_card: File
+    document_cvec: File
     document_residence_permit?: File
 }
 
@@ -13,6 +14,7 @@ export interface ConsultantUpdate extends PersonUpdate {
     document_scolarity_certificate: File
     document_rib: File
     document_vitale_card: File
+    document_cvec: File
     document_residence_permit?: File
 }
 
@@ -35,6 +37,7 @@ export class Consultant implements ConsultantInterface {
     document_scolarity_certificate: File;
     document_rib: File;
     document_vitale_card: File;
+    document_cvec: File;
     document_residence_permit?: File;
     [key: string]: any;
 
@@ -53,6 +56,7 @@ export class Consultant implements ConsultantInterface {
         this.document_identity = consultantInterface.document_identity;
         this.document_scolarity_certificate = consultantInterface.document_scolarity_certificate;
         this.document_rib = consultantInterface.document_rib;
+        this.document_cvec = consultantInterface.document_cvec;
         this.document_vitale_card = consultantInterface.document_vitale_card;
         if(consultantInterface.phoneNumber) this.phoneNumber = consultantInterface.phoneNumber
         if(consultantInterface.outYear) this.outYear = consultantInterface.outYear
@@ -61,6 +65,7 @@ export class Consultant implements ConsultantInterface {
     }
 
     getFormData = (consultantInterface: ConsultantInterface) => {
+        
         let retConsultant: ConsultantUpdate = {
             firstName: consultantInterface.firstName,
             lastName: consultantInterface.lastName,
@@ -78,6 +83,7 @@ export class Consultant implements ConsultantInterface {
             document_identity: consultantInterface.document_identity,
             document_scolarity_certificate: consultantInterface.document_scolarity_certificate,
             document_rib: consultantInterface.document_rib,
+            document_cvec: consultantInterface.document_cvec,
             document_vitale_card: consultantInterface.document_vitale_card
         } as ConsultantUpdate;
 
@@ -110,6 +116,7 @@ export let defaultConsultant = new Consultant({
     /*    document_identity: new File([""], "idDoc"),
         document_scolarity_certificate: new File([""], "scolDoc"),
         document_rib: new File([""], "ribDoc"),
+        document_cvec: new File([""], "cvecDoc"),
         document_vitale_card: new File([""], "vitaleDoc"),*/
 
 } as ConsultantInterface);

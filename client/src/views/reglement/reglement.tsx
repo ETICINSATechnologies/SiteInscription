@@ -1,5 +1,5 @@
 import React from "react";
-import { Card, Nav } from "react-bootstrap";
+import { Card } from "react-bootstrap";
 
 
 const Reglement = () => {

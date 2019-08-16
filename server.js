@@ -5,41 +5,40 @@ const fetch = require('node-fetch')
 const Busboy = require('busboy');
 const bodyParser = require('body-parser');
 const FormData = require('form-data');
-const port = process.env.PORT || 5000
+const fs = require('file-system');
+const port = process.env.PORT || 5000;
+const stripe = require("stripe")(process.env.STRIPE_SK);
+
 require('dotenv').config();
 
-//global variables
+/* Global Variables */
+
 let api_token = '';
-
-//Static file declaration
-app.use(express.static(path.join(__dirname, 'client/build')));
-
-//Stripe parameters
-const stripe = require("stripe")(process.env.STRIPE_SK);
 const endpointSecret = process.env.STRIPE_EP_SK;
 
-app.get('/api/fiche-inscription', (req, res) => {
-  res.download('./files/Fiche_inscription_membre_actif.pdf')
+/* Static File Declaration */
+
+app.use(express.static(path.join(__dirname, 'client/build')));
+
+/* Routes */
+
+app.get('/api/file/:filename', (req, res) => {
+  const path = `./files/${req.params.filename}.pdf`;
+  console.log('getting request with ' + path)
+  fs.access(path, fs.F_OK, (err) => {
+    if (err) {
+      res.status(404).end()
+    }
+    res.download(path)
+  });
 })
 
-app.get('/api/department', (req, res) => {
-  getDepartments().then(data => res.send(data));
-})
-
-app.get('/api/pole', (req, res) => {
-  getPoles().then(data => res.send(data));
-})
-
-app.get('/api/country', (req, res) => {
-  getCountries().then(data => res.send(data));
-})
-
-app.get('/api/gender', (req, res) => {
-  getGenders().then(data => res.send(data));
+app.get('/api/meta/:info', (req, res) => {
+  getMeta(req.params.info).then(data => res.send(data));
 })
 
 app.post('/api/membre-inscription', (req, res) => {
-  var busboy = new Busboy({ headers: req.headers });
+  let busboy = new Busboy({ headers: req.headers });
   let form_data = new FormData();
   let valid = true;
 
@@ -105,23 +104,20 @@ app.post('/api/webhook', bodyParser.raw({ type: 'application/json' }), (req, res
   res.json({ received: true });
 });
 
-//production mode only
 if (process.env.NODE_ENV === 'production') {
   app.use(express.static(path.join(__dirname, 'client/build')));
   //
   app.get('/*', (req, res) => {
     res.sendFile(path.join(__dirname + '/client/build/index.html'));
   })
-} else { //development mode
-
+} else {
   app.get('/*', (req, res) => {
     res.sendFile(path.join(__dirname + '/client/public/index.html'));
   })
-
 }
 
-//server-side functions
-// login
+/* Services */
+
 const login = () => {
   const loginpath = process.env.API_HOST + '/api/v1/auth/login';
   const user = { username: process.env.API_USER, password: process.env.API_PASSWORD };
@@ -142,32 +138,8 @@ const login = () => {
     })
 }
 
-const getDepartments = async () => {
-  let response = await fetch((process.env.API_HOST + '/api/v1/core/department'), {
-    headers: { Authorization: api_token }
-  });
-  let data = await response.json();
-  return data;
-}
-
-const getPoles = async () => {
-  let response = await fetch((process.env.API_HOST + '/api/v1/core/pole'), {
-    headers: { Authorization: api_token }
-  });
-  let data = await response.json();
-  return data;
-}
-
-const getCountries = async () => {
-  let response = await fetch((process.env.API_HOST + '/api/v1/core/country'), {
-    headers: { Authorization: api_token }
-  });
-  let data = await response.json();
-  return data;
-}
-
-const getGenders = async () => {
-  let response = await fetch((process.env.API_HOST + '/api/v1/core/gender'), {
+const getMeta = async (info) => {
+  let response = await fetch((process.env.API_HOST + `/api/v1/core/${info}`), {
     headers: { Authorization: api_token }
   });
   let data = await response.json();
@@ -185,7 +157,8 @@ const handleCheckoutSession = (session) => {
   })
 }
 
-//start server
+/* Server */
+
 app.listen(port, (req, res) => {
   console.log(`Server listening on port: ${port}`);
   login(); //login to keros
