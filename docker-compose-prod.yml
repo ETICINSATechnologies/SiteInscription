@@ -4,8 +4,6 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.prod
-    volumes:
-      - static_volume:/usr/src/app/client/build/static/
     ports:
       - 80:5000
     networks:
@@ -19,6 +17,3 @@ networks:
       driver: default
       config:
         - subnet: 192.164.1.5/24
-
-volumes:
-  static_volume:
