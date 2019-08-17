@@ -3,7 +3,6 @@ import Logo from '../../resources/logo_etic_flashy.gif';
 import { Card, Button } from "react-bootstrap";
 import { Link } from 'react-router-dom';
 
-
 const Home = () => {
 
     return (
@@ -27,11 +26,13 @@ const Home = () => {
                 <Card.Text>
                     Tu rencontres un problème ? Contacte nous : responsable-dsi@etic-insa.com
                 </Card.Text>
+                <Card.Text>
+                    Déjà inscrit mais oublié de télécharger la fiche d'inscription ? <a href="/api/file/fiche_inscription_membre">Clique-ici pour la télécharger</a>
+                </Card.Text>
                 <Card.Img src={Logo} alt='logo etic' className='logo' />
             </Card.Body>
         </Card>
     )
 };
-
 
 export default Home;

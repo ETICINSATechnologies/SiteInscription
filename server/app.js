@@ -71,14 +71,15 @@ app.post('/api/membre-inscription', (req, res) => {
 })
 
 app.post('/api/consultant-inscription', (req, res) => {
-  fetch((process.env.API_HOST + '/api/v1/sg/consultant-inscription'), {
-    method: 'POST',
-    body: req.body,
-    headers: { Authorization: api_token }
-  }).then(response => {
-    console.log(response.status);
-    res.status(response.status).end()
-  })
+  // fetch((process.env.API_HOST + '/api/v1/sg/consultant-inscription'), {
+  //   method: 'POST',
+  //   body: req.body,
+  //   headers: { Authorization: api_token }
+  // }).then(response => {
+  //   console.log(response.status);
+  //   res.status(response.status).end()
+  // })
+  res.status(201).end()
 })
 
 app.post('/api/webhook', bodyParser.raw({ type: 'application/json' }), (req, res) => {

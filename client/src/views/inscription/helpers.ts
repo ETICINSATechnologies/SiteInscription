@@ -1,7 +1,9 @@
+import React from "react";
 import { Person } from "../../model/Person";
 import * as interfaces from "./interfaces";
 import { defaultMember } from "../../model/Member";
 import { defaultConsultant } from "../../model/Consultant";
+import { Gender } from "../../model/Gender";
 
 export const initiateInscriptionState = (isConsultant: boolean) => {
     return (
@@ -35,6 +37,7 @@ export const handleSubmit = (event: React.FormEvent, person: Person, isConsultan
             .then(res => {
                 if (res.ok) {
                     console.log('success');
+                    window.location.href='/landing-consultant'
                 } else {
                     alert('Vérifie tes informations');
                 }
@@ -83,8 +86,28 @@ export const getData = async (url: string) => {
 };
 
 export const links = {
-    inscription : "/api/file/fiche_inscription_membre",
-    ri : "/api/file/reglement_interieur",
-    rse : "/api/file/charte_rse",
-    di : "/api/file/reglement_droit_image",
+    inscription: "/api/file/fiche_inscription_membre",
+    ri: "/api/file/reglement_interieur",
+    rse: "/api/file/charte_rse",
+    di: "/api/file/reglement_droit_image",
+}
+
+export const filterGenders = (genders: Gender[]) => {
+    const newGenders: Gender[] = []
+
+    genders.forEach(gender => {
+        switch (gender.label) {
+            case 'I':
+                break;
+            case 'A':
+                gender.label = 'Autre';
+                newGenders.push(gender)
+                break;
+            default:
+                newGenders.push(gender)
+                break;
+        }
+    });
+
+    return newGenders;
 }

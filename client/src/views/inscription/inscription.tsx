@@ -24,7 +24,7 @@ const Inscription = (props: interfaces.InscriptionProps) => {
       poles: await helpers.getData("/api/meta/pole"),
       departments: await helpers.getData("/api/meta/department"),
       countries: await helpers.getData("/api/meta/country"),
-      genders: await helpers.getData("/api/meta/gender"),
+      genders: helpers.filterGenders(await helpers.getData("/api/meta/gender")),
     });
   }
 
@@ -73,11 +73,10 @@ const Inscription = (props: interfaces.InscriptionProps) => {
     }
   };
 
-  const renderOptions = (objectArray: any[], defaultValue?: number) =>
+  const renderOptions = (objectArray: any[]) =>
     objectArray.map((option: any, index: any) => {
       return (
-        <option key={index} value={option.id}
-          selected={defaultValue && option.id === defaultValue ? true : false}>
+        <option key={index} value={option.id}>
           {option.name ? option.name : option.label}
         </option>
       );
@@ -139,9 +138,9 @@ const Inscription = (props: interfaces.InscriptionProps) => {
                 className="genderId"
                 as="select"
                 onChange={handleChange as any}
-                required
+                value={String(inscriptionState.person.genderId)}
               >
-                {renderOptions(metaInfo.genders, 3)};
+                {renderOptions(metaInfo.genders)};
                 </Form.Control>
             </Form.Group>
 
@@ -173,7 +172,6 @@ const Inscription = (props: interfaces.InscriptionProps) => {
                 className="departmentId"
                 as="select"
                 onChange={handleChange as any}
-                required
               >
                 {renderOptions(metaInfo.departments)};
                 </Form.Control>
@@ -206,9 +204,9 @@ const Inscription = (props: interfaces.InscriptionProps) => {
                 className="nationalityId"
                 as="select"
                 onChange={handleChange as any}
-                required
+                value={String(inscriptionState.person.nationalityId)}
               >
-                {renderOptions(metaInfo.countries, 62)}
+                {renderOptions(metaInfo.countries)}
               </Form.Control>
             </Form.Group>
 
@@ -259,9 +257,9 @@ const Inscription = (props: interfaces.InscriptionProps) => {
                 className="countryId"
                 as="select"
                 onChange={handleChange as any}
-                required
+                value={String(inscriptionState.person.countryId)}
               >
-                {renderOptions(metaInfo.countries, 62)}
+                {renderOptions(metaInfo.countries)}
               </Form.Control>
             </Form.Group>
 
