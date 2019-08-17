@@ -321,7 +321,7 @@ const Inscription = (props: interfaces.InscriptionProps) => {
                       onChange={handleChangeDroitImage as any} />
                     <Form.Label>
                       Je déclare avoir lu les
-                        <a href={helpers.links.di}> règlements par rapport à la droit à l'image </a>
+                        <a href={helpers.links.di}> règlements par rapport au droit à l'image </a>
                     </Form.Label>
                   </Form.Group>
                 </React.Fragment>
