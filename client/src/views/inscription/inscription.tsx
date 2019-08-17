@@ -4,6 +4,8 @@ import { Button, Form, Container, Row, Col } from "react-bootstrap";
 import *  as helpers from "./helpers";
 import * as interfaces from "./interfaces";
 
+const logo_etic = require('../../resources/logo_etic.png');
+
 declare global {
   interface Window {
     Stripe: any;
@@ -339,7 +341,10 @@ const Inscription = (props: interfaces.InscriptionProps) => {
           </Col>
         </Row>
       </Form>
-
+      
+      <div id="logo_etic_container">
+        <img src={logo_etic} id="logo_etic_big" className="pulse" alt="ETIC INSA"></img>
+      </div>
 
     </Container >
   );
