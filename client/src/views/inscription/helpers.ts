@@ -4,6 +4,7 @@ import * as interfaces from "./interfaces";
 import { defaultMember } from "../../model/Member";
 import { defaultConsultant } from "../../model/Consultant";
 import { Gender } from "../../model/Gender";
+import { Nationality } from "../../model/Nationality";
 
 export const initiateInscriptionState = (isConsultant: boolean) => {
     return (
@@ -37,7 +38,7 @@ export const handleSubmit = (event: React.FormEvent, person: Person, isConsultan
             .then(res => {
                 if (res.ok) {
                     console.log('success');
-                    window.location.href='/landing-consultant'
+                    window.location.href = '/landing-consultant'
                 } else {
                     alert('Vérifie tes informations');
                 }
@@ -110,4 +111,8 @@ export const filterGenders = (genders: Gender[]) => {
     });
 
     return newGenders;
+}
+
+export const filterNationalities = (nationalities: Nationality[], removeId: number) => {
+    return nationalities.filter(nationality => nationality.id !== removeId)
 }

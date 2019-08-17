@@ -206,7 +206,7 @@ const Inscription = (props: interfaces.InscriptionProps) => {
                 onChange={handleChange as any}
                 value={String(inscriptionState.person.nationalityId)}
               >
-                {renderOptions(metaInfo.countries)}
+                {props.isConsultant ? renderOptions(helpers.filterNationalities(metaInfo.countries, 4)) : renderOptions(metaInfo.countries)}
               </Form.Control>
             </Form.Group>
 
