@@ -33,6 +33,13 @@ code {
   border-radius: 10px;
 }
 
+/* For mobile: */
+@media only screen and (max-width: 768px) {
+  .is-rounded {
+    border-radius: 0
+  }
+}
+
 .logo {
   width: 50px;
   filter: contrast(1.25);
