@@ -407,24 +407,44 @@ const Inscription = (props: interfaces.InscriptionProps) => {
     </Form.Group>
   )
 
+  const renderSubmit = () => {
+    return (
+      <React.Fragment>
+        {
+          props.isConsultant ? null :
+            <div className='has-margin-top'>
+              <p className="important">Une cotisation de 4 euros est demandée à chaque nouvel adhérent pour finaliser son inscription. Cette cotisation permet de contribuer à la vie quotidienne de l’association.</p>
+            </div>
+        }
+        <div className="text-center">
+          <Button variant="primary" type="submit">
+            {props.isConsultant ? "Valider et s'inscrire" : "Payer et s'inscrire"}
+          </Button>
+        </div>
+      </React.Fragment>
+
+    )
+  }
+
   const renderMember = () => {
     return (
-      <Row>
+      <React.Fragment>
         <Col md>
           {firstName} {lastName} {genderId} {birthday} {email} {departmentId} {phoneNumber}
-          {outYear} {nationalityId} {line1}
+          {outYear} {nationalityId} {line1} {line2}
         </Col>
         <Col md>
-          {line2} {city} {postalCode} {countryId} {wantedPoleId}
+          {city} {postalCode} {countryId} {wantedPoleId}
           {ri} {charte} {donnees} {droitImage}
+          {renderSubmit()}
         </Col>
-      </Row>
+      </React.Fragment>
     )
   }
 
   const renderConsultant = () => {
     return (
-      <Row>
+      <React.Fragment>
         <Col md>
           {firstName} {lastName} {genderId} {birthday} {email} {departmentId} {phoneNumber}
           {outYear} {nationalityId} {line1} {line2} {city} {postalCode}
@@ -434,8 +454,9 @@ const Inscription = (props: interfaces.InscriptionProps) => {
           {document_scolary_certificate} {document_vitale_card} {document_rib} {document_cvec}
           {document_residence_permit} {isAlternant}
           {ri} {charte} {donnees} {droitImage}
+          {renderSubmit()}
         </Col>
-      </Row>
+      </React.Fragment>
     )
   }
 
@@ -449,22 +470,9 @@ const Inscription = (props: interfaces.InscriptionProps) => {
         <Col><h4 className="text-center">{props.isConsultant ? "Inscription Consultant" : "Inscription Membre Actif"}</h4></Col>
       </Row>
       <Form onSubmit={(event: React.FormEvent<Element>) => helpers.handleSubmit(event, inscriptionState.person, props.isConsultant)}>
-        {props.isConsultant ? renderConsultant() : renderMember()}
-        <Row className="text-center">
-          <Col>
-            <Button variant="primary" type="submit">
-              {props.isConsultant ? "Valider et s'inscrire" : "Payer et s'inscrire"}
-            </Button>
-          </Col>
+        <Row>
+          {props.isConsultant ? renderConsultant() : renderMember()}
         </Row>
-        {props.isConsultant ? null :
-          <Row className="text-center has-margin-top">
-            <Col className="important">
-              Une cotisation de 4 euros est demandée à chaque nouvel adhérent pour finaliser son inscription. Cette cotisation permet de contribuer à la vie quotidienne de l’association.
-            </Col>
-          </Row>
-        }
-
       </Form>
 
       <div id="logo_etic_container">
