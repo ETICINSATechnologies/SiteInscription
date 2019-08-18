@@ -8,14 +8,11 @@ const Landing_Consultant = () => {
         <Card className='card has-max-width-500'>
             <Card.Header>ETIC INSA Technologies</Card.Header>
             <Card.Body className='text-center'>
-                <Card.Title>Inscription</Card.Title>
-                <Card.Text>
-                    Vos détails ont bien été prises en compte
-                        </Card.Text>
-                <Card.Text>
-                    Vous récevrez bientôt un mail pour la suite de votre inscription
-                        </Card.Text>
-                <Card.Img src={Logo} alt='logo etic' className='logo' />
+                <Card.Title>Félicitations !</Card.Title>
+                <Card.Text>Merci pour ton inscription et pour ta confiance</Card.Text>
+                <Card.Text>Notre Secrétaire Générale revient vers toi rapidement pour finaliser ton inscription</Card.Text>
+                <Card.Text>Tu rencontres un problème ? Contacte nous : responsable.dsi@etic-insa.com</Card.Text>
+                <a href='https://www.etic-insa.com/'><Card.Img src={Logo} alt='logo etic' className='logo' /></a>
             </Card.Body>
         </Card>
     );

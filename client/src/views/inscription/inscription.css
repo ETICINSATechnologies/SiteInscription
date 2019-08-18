@@ -11,6 +11,11 @@ Form.Control:invalid {
     color: red;
 }
 
+.important::before {
+    content: "*";
+    color: red;
+}
+
 .background-is-white {
     background-color: white;
 }
@@ -55,10 +60,41 @@ Form.Control:invalid {
 }
 
 @keyframes pulse_container {
-    0% {
-    }
+    0% {}
     100% {
         visibility: hidden;
         display: none;
     }
+}
+
+/* For mobile: */
+
+@media only screen and (min-width: 768px) {
+    .has-vertical-margins-desktop {
+        margin-top: 2rem;
+        margin-bottom: 2rem;
+    }
+}
+
+.has-margin-bottom {
+    margin-bottom: 1rem;
+}
+
+.has-margin-top {
+    margin-top: 1rem;
+}
+
+.btn-like-link {
+    background: none!important;
+    border: none;
+    padding: 0!important;
+    cursor: pointer;
+    color: #007bff;
+    text-decoration: none;
+    background-color: transparent;
+}
+
+.btn-like-link:hover {
+    color: #0056b3;
+    text-decoration: underline;
 }

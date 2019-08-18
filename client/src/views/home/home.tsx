@@ -9,9 +9,9 @@ const Home = () => {
         <Card className='card has-max-width-500'>
             <Card.Header>ETIC INSA Technologies</Card.Header>
             <Card.Body className="text-center">
-                <Card.Title>Inscription</Card.Title>
+                <Card.Title>Site d'inscription</Card.Title>
                 <Card.Text>
-                    Bienvenue sur le site d'inscription en ligne pour rejoindre la Junior-Entreprise de l'INSA : ETIC INSA Technologies
+                    Bienvenue sur le site d'inscription en ligne pour rejoindre la Junior-Entreprise de ton école : ETIC INSA Technologies
                 </Card.Text>
                 <Link to="/member">
                     <Button variant="primary" className="full-width" style={{ margin: '0.2rem auto 0.2rem auto' }}>
@@ -24,12 +24,12 @@ const Home = () => {
                     </Button>
                 </Link>
                 <Card.Text>
-                    Tu rencontres un problème ? Contacte nous : responsable-dsi@etic-insa.com
+                    Tu rencontres un problème ? Contacte nous : responsable.dsi@etic-insa.com
                 </Card.Text>
                 <Card.Text>
-                    Déjà inscrit mais oublié de télécharger la fiche d'inscription ? <a href="/api/file/fiche_inscription_membre">Clique-ici pour la télécharger</a>
+                    Déjà inscrit et tu souhaites remplir la fiche d'inscription ? <a href="/api/file/fiche_inscription_membre">Clique-ici pour la télécharger</a>
                 </Card.Text>
-                <Card.Img src={Logo} alt='logo etic' className='logo' />
+                <a href='https://www.etic-insa.com/'><Card.Img src={Logo} alt='logo etic' className='logo' /></a>
             </Card.Body>
         </Card>
     )

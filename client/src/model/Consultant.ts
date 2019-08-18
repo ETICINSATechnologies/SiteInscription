@@ -1,6 +1,7 @@
 import { Person, PersonUpdate } from "./Person";
 
 export interface ConsultantInterface extends Person {
+    isAlternant: boolean
     document_identity: File
     document_scolarity_certificate: File
     document_rib: File
@@ -10,6 +11,7 @@ export interface ConsultantInterface extends Person {
 }
 
 export interface ConsultantUpdate extends PersonUpdate {
+    isAlternant: boolean
     document_identity: File
     document_scolarity_certificate: File
     document_rib: File
@@ -33,6 +35,7 @@ export class Consultant implements ConsultantInterface {
     city: string
     postalCode: number
     countryId: number
+    isAlternant: boolean
     document_identity: File;
     document_scolarity_certificate: File;
     document_rib: File;
@@ -53,6 +56,7 @@ export class Consultant implements ConsultantInterface {
         this.city = consultantInterface.city;
         this.postalCode = consultantInterface.postalCode;
         this.countryId = consultantInterface.countryId;
+        this.isAlternant = consultantInterface.isAlternant;
         this.document_identity = consultantInterface.document_identity;
         this.document_scolarity_certificate = consultantInterface.document_scolarity_certificate;
         this.document_rib = consultantInterface.document_rib;
@@ -80,6 +84,7 @@ export class Consultant implements ConsultantInterface {
                 postalCode: consultantInterface.postalCode,
                 countryId: consultantInterface.countryId,
             },
+            isAlternant: consultantInterface.isAlternant,
             document_identity: consultantInterface.document_identity,
             document_scolarity_certificate: consultantInterface.document_scolarity_certificate,
             document_rib: consultantInterface.document_rib,
@@ -112,6 +117,7 @@ export let defaultConsultant = new Consultant({
     postalCode: 0,
     countryId: 62,
     genderId: 3,
+    isAlternant: false,
 
     /*    document_identity: new File([""], "idDoc"),
         document_scolarity_certificate: new File([""], "scolDoc"),

@@ -91,6 +91,8 @@ export const links = {
     ri: "/api/file/reglement_interieur",
     rse: "/api/file/charte_rse",
     di: "/api/file/reglement_droit_image",
+    stt: "/api/file/statuts",
+    cq: "/api/file/charte_qualite",
 }
 
 export const filterGenders = (genders: Gender[]) => {

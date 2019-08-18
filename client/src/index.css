@@ -1,7 +1,13 @@
+/* Variables */
+:root {
+  --main-bg-color: #6BA37E;
+  --main-btn-color: #005360;
+}
+
 body, html {
   width: 100%;
   min-height: 100%;
-  background-color: #005360;
+  background-color: var(--main-bg-color);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -9,7 +15,7 @@ body, html {
 
 #root {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
-  background-color: #005360;
+  background-color: var(--main-bg-color);
   width: 100%;
   min-height: 100%;
   display: flex;
@@ -51,4 +57,14 @@ code {
 
 .has-max-width-500 {
   max-width: 500px;
+}
+
+.btn {
+  background-color: var(--main-btn-color);
+  border: none;
+}
+
+.btn:hover {
+  background-color: var(--main-btn-color);
+  border: none;
 }
