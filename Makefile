@@ -9,3 +9,5 @@ prod-down:
 
 prod-logs:
 	docker-compose -f docker-compose-prod.yml logs -f
+
+prod: prod-down prod-build prod-up
