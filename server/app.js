@@ -1,7 +1,7 @@
 const express = require('express')
 const app = express();
-const path = require('path')
-const fetch = require('node-fetch')
+const path = require('path');
+const fetch = require('node-fetch');
 const Busboy = require('busboy');
 const bodyParser = require('body-parser');
 const FormData = require('form-data');
@@ -14,6 +14,13 @@ require('dotenv').config();
 /* Global Variables */
 
 let api_token = '';
+const keros_meta = {
+  'gender': [],
+  'country': [],
+  'department': [],
+  'pole': [],
+}
+const refreshInterval = 12 * 3600 * 1000; //12 hours
 const endpointSecret = process.env.STRIPE_EP_SK;
 
 /* Static File Declaration */
@@ -32,8 +39,8 @@ app.get('/api/file/:filename', (req, res) => {
   });
 })
 
-app.get('/api/meta/:info', (req, res) => {
-  getMeta(req.params.info).then(data => res.send(data));
+app.get('/api/meta', (req, res) => {
+  res.send(keros_meta);
 })
 
 app.post('/api/membre-inscription', (req, res) => {
@@ -118,24 +125,33 @@ if (process.env.NODE_ENV === 'production') {
 
 /* Services */
 
-const login = () => {
+const loginKeros = async (callback) => {
   const loginpath = process.env.API_HOST + '/api/v1/auth/login';
   const user = { username: process.env.API_USER, password: process.env.API_PASSWORD };
-  fetch(loginpath, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(user)
-  })
-    .then(res => {
-      if (res.status === 200) {
-        console.log("Logged into keros, all's good ! ^^");
-        res.json().then(result => { api_token = result.token });
-      } else {
-        console.log('Failed to login to keros :o, the app will not function correctly !');
-      }
+  const res = await fetch(loginpath,
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(user)
     })
+  if (res.ok) {
+    console.log("Logged into keros");
+    const result = await res.json();
+    api_token = result.token;
+    if (callback) callback();
+  } else {
+    console.log('Failed to login to keros, trying again in 30s');
+    setTimeout(() => { loginKeros() }, 30000);
+  }
+}
+
+const refreshMeta = async () => {
+  console.log('Getting keros meta data');
+  for (const key in keros_meta) {
+    keros_meta[key] = await getMeta(key);
+  }
 }
 
 const getMeta = async (info) => {
@@ -161,5 +177,8 @@ const handleCheckoutSession = (session) => {
 
 app.listen(port, (req, res) => {
   console.log(`Server listening on port: ${port}`);
-  login(); //login to keros
+  loginKeros(refreshMeta);
+  setInterval(() => {
+    loginKeros(refreshMeta);
+  }, refreshInterval);
 })

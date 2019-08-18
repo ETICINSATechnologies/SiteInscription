@@ -82,7 +82,7 @@ export const getData = async (url: string) => {
         const data = await response.json();
         return data;
     } else {
-        return []
+        return {}
     }
 };
 

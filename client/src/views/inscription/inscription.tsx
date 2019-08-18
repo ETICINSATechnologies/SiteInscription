@@ -22,12 +22,15 @@ const Inscription = (props: interfaces.InscriptionProps) => {
   }, []);
 
   const refreshMetaInfo = async () => {
-    setMetaInfo({
-      poles: await helpers.getData("/api/meta/pole"),
-      departments: await helpers.getData("/api/meta/department"),
-      countries: await helpers.getData("/api/meta/country"),
-      genders: helpers.filterGenders(await helpers.getData("/api/meta/gender")),
-    });
+    const metaInfo = await helpers.getData("/api/meta")
+    if (metaInfo) {
+      setMetaInfo({
+        poles: metaInfo.pole ? metaInfo.pole : [],
+        departments: metaInfo.department ? metaInfo.department : [],
+        countries: metaInfo.country ? metaInfo.country : [],
+        genders: metaInfo.gender ? helpers.filterGenders(metaInfo.gender) : [],
+      });
+    }
   }
 
   const handleChange = (event: React.ChangeEvent) => {
@@ -341,7 +344,7 @@ const Inscription = (props: interfaces.InscriptionProps) => {
           </Col>
         </Row>
       </Form>
-      
+
       <div id="logo_etic_container">
         <img src={logo_etic} id="logo_etic_big" className="pulse" alt="ETIC INSA"></img>
       </div>
