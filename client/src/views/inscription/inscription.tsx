@@ -54,7 +54,6 @@ const Inscription = (props: interfaces.InscriptionProps) => {
   const handleChangeCheckbox = (event: React.ChangeEvent) => {
     event.persist();
     const property: string = event.target.id;
-    console.log(property)
     if (inscriptionState.person.hasOwnProperty(property)) {
       setInscriptionState((previous) => ({
         ...previous,
@@ -87,6 +86,10 @@ const Inscription = (props: interfaces.InscriptionProps) => {
       event.preventDefault();
       event.stopPropagation();
     }
+  }
+
+  const stopEvent = (event: React.MouseEvent<HTMLElement, MouseEvent>) => {
+    event.stopPropagation();
   }
 
   const renderOptions = (objectArray: any[]) =>
@@ -304,7 +307,7 @@ const Inscription = (props: interfaces.InscriptionProps) => {
       <Form.Check
         type={'checkbox'}
         onChange={handleChangeCheckbox as any} />
-      <Form.Label>J’effectues ma formation en alternance</Form.Label>
+      <Form.Label>J’effectue ma formation en alternance</Form.Label>
     </Form.Group>
   )
 
@@ -370,25 +373,31 @@ const Inscription = (props: interfaces.InscriptionProps) => {
 
   const ri = (
     <Form.Group style={{ display: 'grid', gridTemplateColumns: '1fr 10fr' }} controlId="ri">
-      <Form.Check type={'checkbox'} required />
+      <Form.Check type={'checkbox'} required>
+        <Form.Check.Input required type={'checkbox'}></Form.Check.Input>
+      </Form.Check>
       <Form.Label className="required">
-        J'ai bien pris connaissance du <a href={helpers.links.ri}> règlement intérieur </a> et des <a href={helpers.links.stt}> statuts d'ETIC</a>
+        J'ai bien pris connaissance du <a href={helpers.links.ri} onClick={stopEvent}> règlement intérieur </a> et des <a href={helpers.links.stt} onClick={stopEvent}> statuts d'ETIC</a>
       </Form.Label>
     </Form.Group>
   )
 
   const charte = (
     <Form.Group style={{ display: 'grid', gridTemplateColumns: '1fr 10fr' }} controlId="charte">
-      <Form.Check type={'checkbox'} required />
+      <Form.Check type={'checkbox'} required>
+        <Form.Check.Input required type={'checkbox'}></Form.Check.Input>
+      </Form.Check>
       <Form.Label className="required">
-        J'ai bien pris connaissance de la <a href={helpers.links.rse}> charte RSE </a> et de la <a href={helpers.links.cq}> charte qualité d'ETIC</a>
+        J'ai bien pris connaissance de la <a href={helpers.links.rse} onClick={stopEvent}> charte RSE </a> et de la <a href={helpers.links.cq} onClick={stopEvent}> charte qualité d'ETIC</a>
       </Form.Label>
     </Form.Group>
   )
 
   const donnees = (
     <Form.Group style={{ display: 'grid', gridTemplateColumns: '1fr 10fr' }} controlId="donnees">
-      <Form.Check type={'checkbox'} required />
+      <Form.Check type={'checkbox'} required>
+        <Form.Check.Input required type={'checkbox'}></Form.Check.Input>
+      </Form.Check>
       <Form.Label className="required">
         J’accepte que mes données personnelles soient utilisées au sein d’ETIC dans le cadre de l’activité de l’association. ETIC et chacun de ses membres s’engagent à ne pas divulguer ces informations en dehors de l’activité de la Junior
     </Form.Label>
@@ -397,10 +406,9 @@ const Inscription = (props: interfaces.InscriptionProps) => {
 
   const droitImage = (
     <Form.Group style={{ display: 'grid', gridTemplateColumns: '1fr 10fr' }} controlId="droitImage">
-      <Form.Check
-        className="droitImage"
-        type={'checkbox'}
-        onChange={handleChangeCheckbox as any} />
+      <Form.Check type={'checkbox'}>
+        <Form.Check.Input type={'checkbox'} id={"droitImage"} onChange={handleChangeCheckbox as any}></Form.Check.Input>
+      </Form.Check>
       <Form.Label>
         J’accepte d’apparaître sur des photos dans le cadre de l’activité de la Junior
     </Form.Label>
