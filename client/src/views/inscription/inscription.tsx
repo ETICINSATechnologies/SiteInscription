@@ -69,14 +69,19 @@ const Inscription = (props: interfaces.InscriptionProps) => {
     event.persist();
     let property: string = event.target.id;
     if (inscriptionState.person.hasOwnProperty(property)) {
-      let value = (event.target as HTMLFormElement).value;
-      setInscriptionState({
-        ...inscriptionState,
-        person: {
-          ...inscriptionState.person,
-          [property]: value
-        }
-      });
+      let reader = new FileReader();
+      let file = (event.target as HTMLFormElement).files[0];
+
+      reader.onloadend = () => {
+        setInscriptionState({
+          ...inscriptionState,
+          person: {
+            ...inscriptionState.person,
+            [property]: file
+          }
+        });
+      }
+      reader.readAsDataURL(file);
     }
   };
 
@@ -302,8 +307,8 @@ const Inscription = (props: interfaces.InscriptionProps) => {
     </Form.Group>
   )
 
-  const isAlternant = (
-    <Form.Group style={{ display: 'grid', gridTemplateColumns: '1fr 10fr' }} controlId="isAlternant">
+  const isApprentice = (
+    <Form.Group style={{ display: 'grid', gridTemplateColumns: '1fr 10fr' }} controlId="isApprentice">
       <Form.Check
         type={'checkbox'}
         onChange={handleChangeCheckbox as any} />
@@ -311,49 +316,62 @@ const Inscription = (props: interfaces.InscriptionProps) => {
     </Form.Group>
   )
 
-  const document_identity = (
-    <Form.Group controlId="document_identity">
+  const socialSecurityNumber = (
+    <Form.Group controlId="socialSecurityNumber">
+      <Form.Label className="required">
+        Numéro de sécurité sociale
+      </Form.Label>
+      <Form.Control
+        className="socialSecurityNumber"
+        required
+        onChange={handleChangeInput as any}
+      />
+    </Form.Group>
+  )
+
+  const documentIdentity = (
+    <Form.Group controlId="documentIdentity">
       <Form.Label className="required">Pièce d'identité ou passeport</Form.Label>
-      <Form.Control className='document_identity' onChange={handleChangeFile as any} type="file" required />
+      <Form.Control className='documentIdentity' onChange={handleChangeFile as any} type="file" required />
     </Form.Group>
   )
 
-  const document_scolary_certificate = (
-    <Form.Group controlId="document_scolarity_certificate">
+  const documentScolaryCertificate = (
+    <Form.Group controlId="documentScolaryCertificate">
       <Form.Label className="required">Certificat de scolarité (de l'année courante)</Form.Label>
-      <Form.Control className='document_scolary_certificate' onChange={handleChangeFile as any} type="file" required />
+      <Form.Control className='documentScolaryCertificate' onChange={handleChangeFile as any} type="file" required />
     </Form.Group>
   )
 
-  const document_vitale_card = (
-    <Form.Group controlId="document_vitale_card">
+  const documentVitaleCard = (
+    <Form.Group controlId="documentVitaleCard">
       <Form.Label className="required">Carte Vitale</Form.Label>
-      <Form.Control className='document_vitale_card' onChange={handleChangeFile as any} type="file" required />
+      <Form.Control className='documentVitaleCard' onChange={handleChangeFile as any} type="file" required />
     </Form.Group>
   )
 
-  const document_rib = (
-    <Form.Group controlId="document_rib">
+  const documentRIB = (
+    <Form.Group controlId="documentRIB">
       <Form.Label className="required">RIB</Form.Label>
-      <Form.Control className='document_rib' onChange={handleChangeFile as any} type="file" required />
+      <Form.Control className='documentRIB' onChange={handleChangeFile as any} type="file" required />
     </Form.Group>
   )
 
-  const document_cvec = (
-    <Form.Group controlId="document_cvec">
+  const documentCVEC = (
+    <Form.Group controlId="documentCVEC">
       <Form.Label className="required">CVEC (de l'année courante)</Form.Label>
-      <Form.Control className='document_cvec' onChange={handleChangeFile as any} type="file" required />
+      <Form.Control className='documentCVEC' onChange={handleChangeFile as any} type="file" required />
     </Form.Group>
   )
 
-  const document_residence_permit = (
-    <Form.Group controlId="document_resident_permit">
+  const documentResidencePermit = (
+    <Form.Group controlId="documentResidencePermit">
       <Form.Label>
         Titre de séjour valide (si étudiant étranger)
       <br />
         <button className='btn-like-link' onClick={handleToggleModal}>Clique-ici pour plus d'information</button>
       </Form.Label>
-      <Form.Control className='document_resident_permit' onChange={handleChangeFile as any} type="file" />
+      <Form.Control className='documentResidencePermit' onChange={handleChangeFile as any} type="file" />
     </Form.Group>
   )
 
@@ -455,12 +473,12 @@ const Inscription = (props: interfaces.InscriptionProps) => {
       <React.Fragment>
         <Col md>
           {firstName} {lastName} {genderId} {birthday} {email} {departmentId} {phoneNumber}
-          {outYear} {nationalityId} {line1} {line2} {city} {postalCode}
+          {outYear} {nationalityId} {line1} {line2} {city} {postalCode} {countryId} 
         </Col>
         <Col md>
-          {countryId} {document_identity}
-          {document_scolary_certificate} {document_vitale_card} {document_rib} {document_cvec}
-          {document_residence_permit} {isAlternant}
+          {socialSecurityNumber} {documentIdentity}
+          {documentScolaryCertificate} {documentVitaleCard} {documentRIB} {documentCVEC}
+          {documentResidencePermit} {isApprentice}
           {ri} {charte} {donnees} {droitImage}
           {renderSubmit()}
         </Col>

@@ -8,12 +8,14 @@ const FormData = require('form-data');
 const fs = require('file-system');
 const port = process.env.PORT || 5000;
 const stripe = require("stripe")(process.env.STRIPE_SK);
+const proxy = require('express-http-proxy');
 
 require('dotenv').config();
 
 /* Global Variables */
 
 let api_token = '';
+
 const keros_meta = {
   'gender': [],
   'country': [],
@@ -77,17 +79,15 @@ app.post('/api/membre-inscription', (req, res) => {
   req.pipe(busboy);
 })
 
-app.post('/api/consultant-inscription', (req, res) => {
-  // fetch((process.env.API_HOST + '/api/v1/sg/consultant-inscription'), {
-  //   method: 'POST',
-  //   body: req.body,
-  //   headers: { Authorization: api_token }
-  // }).then(response => {
-  //   console.log(response.status);
-  //   res.status(response.status).end()
-  // })
-  res.status(201).end()
-})
+app.use('/api/consultant-inscription', proxy(process.env.API_HOST, {
+  proxyReqOptDecorator: function(proxyReqOpts) {
+    proxyReqOpts.headers['Authorization'] = api_token;
+    return proxyReqOpts;
+  },
+  proxyReqPathResolver: function () {
+    return '/api/v1/sg/consultant-inscription';
+  }
+}));
 
 app.post('/api/webhook', bodyParser.raw({ type: 'application/json' }), (req, res) => {
   let sig = req.headers["stripe-signature"];
@@ -162,9 +162,11 @@ const getMeta = async (info) => {
   return data;
 }
 
-const handleCheckoutSession = (session) => {
+const handleCheckoutSession = async (session) => {
+  console.log('Receiving checkout session');
   console.log('Stripe checkout session received from ' + session.client_reference_id);
-  fetch((process.env.API_HOST + '/api/v1/sg/membre-inscription/' + session.client_reference_id + '/confirm-payment'), {
+
+  const result = await fetch((process.env.API_HOST + '/api/v1/sg/membre-inscription/' + session.client_reference_id + '/confirm-payment'), {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

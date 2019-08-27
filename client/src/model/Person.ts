@@ -10,6 +10,7 @@ interface PersonGeneral {
     phoneNumber?: string
     outYear?: number
     nationalityId: number
+    droitImage: boolean
     [key: string]: any
 }
 export interface Person extends PersonGeneral {

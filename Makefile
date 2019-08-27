@@ -1,4 +1,4 @@
-prod-build:
+prod-build:	check
 	docker-compose -f docker-compose-prod.yml build
 
 prod-up:
@@ -9,5 +9,11 @@ prod-down:
 
 prod-logs:
 	docker-compose -f docker-compose-prod.yml logs -f
+
+check:
+	./provisioning/check_environment.sh
+	
+compile-typescript:
+	./provisioning/compile_typescript.sh
 
 prod: prod-down prod-build prod-up

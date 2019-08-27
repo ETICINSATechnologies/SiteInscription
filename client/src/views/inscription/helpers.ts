@@ -37,7 +37,6 @@ export const handleSubmit = (event: React.FormEvent, person: Person, isConsultan
         })
             .then(res => {
                 if (res.ok) {
-                    console.log('success');
                     window.location.href = '/landing-consultant'
                 } else {
                     alert('Vérifie tes informations');

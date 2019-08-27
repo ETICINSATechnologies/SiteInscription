@@ -2,12 +2,10 @@ import { Person, PersonUpdate } from "./Person";
 
 export interface MemberInterface extends Person {
     wantedPoleId: number
-    droitImage: boolean
 }
 
 export interface MemberUpdate extends PersonUpdate {
     wantedPoleId: number
-    droitImage: boolean
 }
 
 export class Member implements MemberInterface {
