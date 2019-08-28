@@ -5,9 +5,9 @@ services:
       context: .
       dockerfile: Dockerfile.prod
     ports:
-      - 80:5000
+      - 1337:5000
     networks:
-      - eticnet
+      - inscriptionnet
     restart: unless-stopped
 
 networks:
