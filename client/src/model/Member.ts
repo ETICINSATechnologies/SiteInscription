@@ -67,7 +67,7 @@ export class Member implements MemberInterface {
 
         if(memberInterface.phoneNumber) retMember.phoneNumber = memberInterface.phoneNumber
         if(memberInterface.outYear) retMember.outYear = memberInterface.outYear
-        if(memberInterface.line2) retMember['address[line2'] = memberInterface.line2
+        if(memberInterface.line2) retMember['address[line2]'] = memberInterface.line2
 
         let form_data = new FormData()
         for (let key in retMember) {

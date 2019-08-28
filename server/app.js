@@ -80,7 +80,7 @@ app.post('/api/membre-inscription', (req, res) => {
 })
 
 app.use('/api/consultant-inscription', proxy(process.env.API_HOST, {
-  proxyReqOptDecorator: function(proxyReqOpts) {
+  proxyReqOptDecorator: function (proxyReqOpts) {
     proxyReqOpts.headers['Authorization'] = api_token;
     return proxyReqOpts;
   },
@@ -128,7 +128,13 @@ if (process.env.NODE_ENV === 'production') {
 const loginKeros = async (callback) => {
   const loginpath = process.env.API_HOST + '/api/v1/auth/login';
   const user = { username: process.env.API_USER, password: process.env.API_PASSWORD };
-  const res = await fetch(loginpath,
+
+  const relogin = () => {
+    console.log('Failed to login to keros, trying again in 30s');
+    setTimeout(() => { loginKeros() }, 30000);
+  }
+
+  fetch(loginpath,
     {
       method: 'POST',
       headers: {
@@ -136,15 +142,25 @@ const loginKeros = async (callback) => {
       },
       body: JSON.stringify(user)
     })
-  if (res.ok) {
-    console.log("Logged into keros");
-    const result = await res.json();
-    api_token = result.token;
-    if (callback) callback();
-  } else {
-    console.log('Failed to login to keros, trying again in 30s');
-    setTimeout(() => { loginKeros() }, 30000);
-  }
+    .then((res) => {
+      if (res.ok) {
+        console.log("Logged into keros");
+        res.json()
+          .then((result) => {
+            api_token = result.token;
+            if (callback) callback();
+          })
+          .catch(() => {
+            
+          })
+      } else {
+        relogin();
+      }
+    })
+    .catch(() => {
+      relogin();
+    })
+
 }
 
 const refreshMeta = async () => {

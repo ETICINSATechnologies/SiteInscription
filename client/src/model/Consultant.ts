@@ -99,9 +99,8 @@ export class Consultant implements ConsultantInterface {
 
         if (consultantInterface.phoneNumber) retConsultant.phoneNumber = consultantInterface.phoneNumber
         if (consultantInterface.outYear) retConsultant.outYear = consultantInterface.outYear
-        if (consultantInterface.line2) retConsultant.address.line2 = consultantInterface.line2
-        if (consultantInterface.documentResidencePermit) retConsultant.document_residence_permit = consultantInterface.documentResidencePermit
-
+        if (consultantInterface.line2) retConsultant['address[line2]'] = consultantInterface.line2
+        if (consultantInterface.documentResidencePermit) retConsultant.documentResidencePermit = consultantInterface.documentResidencePermit
         let form_data = new FormData();
         for (let key in retConsultant) {
             if (retConsultant[key] instanceof File) {
@@ -111,7 +110,6 @@ export class Consultant implements ConsultantInterface {
             } else {
                 form_data.append(key, retConsultant[key]);
             }
-
         }
 
         return form_data;
