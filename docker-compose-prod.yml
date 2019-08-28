@@ -11,7 +11,7 @@ services:
     restart: unless-stopped
 
 networks:
-  eticnet:
+  inscriptionnet:
     driver: bridge
     ipam:
       driver: default
