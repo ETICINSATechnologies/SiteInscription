@@ -40,4 +40,4 @@ var EmailSender = /** @class */ (function () {
     };
     return EmailSender;
 }());
-exports["default"] = EmailSender;
+exports.EmailSender = EmailSender;

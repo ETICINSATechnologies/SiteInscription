@@ -1,3 +1,5 @@
+const EmailSender = require('./services/EmailSender/EmailSender').EmailSender;
+const makeHTML = require('./services/Helpers/EmailHelpers').makeHTML;
 const express = require('express')
 const app = express();
 const path = require('path');
@@ -25,6 +27,13 @@ const keros_meta = {
 const refreshInterval = 12 * 3600 * 1000; //12 hours
 const endpointSecret = process.env.STRIPE_EP_SK;
 
+const email_auth = {
+  user: process.env.EMAIL_ADDRESS,
+  pass: process.env.EMAIL_PASS
+}
+
+const email_sg = 'slokuge97@gmail.com';
+
 /* Static File Declaration */
 
 app.use(express.static(path.join(__dirname, '../client/build')));
@@ -45,39 +54,15 @@ app.get('/api/meta', (req, res) => {
   res.send(keros_meta);
 })
 
-app.post('/api/membre-inscription', (req, res) => {
-  let busboy = new Busboy({ headers: req.headers });
-  let form_data = new FormData();
-  let valid = true;
-
-  busboy.on('field', function (fieldname, val) {
-    form_data.append(fieldname, val);
-    if (fieldname === 'hasPaid' && val === 'true') valid = false;
-  });
-
-  busboy.on("finish", function () {
-    if (valid) {
-      fetch((process.env.API_HOST + '/api/v1/sg/membre-inscription'), {
-        method: 'POST',
-        body: form_data,
-        headers: { Authorization: api_token }
-      }).then(response => {
-        if (response.status === 201) {
-          response.json()
-            .then(data => {
-              res.send(data).end();
-            }
-            )
-        } else {
-          res.status(response.status).end();
-        }
-      })
-    } else {
-      res.status(401).end();
-    }
-  });
-  req.pipe(busboy);
-})
+app.use('/api/membre-inscription', proxy(process.env.API_HOST, {
+  proxyReqOptDecorator: function (proxyReqOpts) {
+    proxyReqOpts.headers['Authorization'] = api_token;
+    return proxyReqOpts;
+  },
+  proxyReqPathResolver: function () {
+    return '/api/v1/sg/membre-inscription';
+  }
+}));
 
 app.use('/api/consultant-inscription', proxy(process.env.API_HOST, {
   proxyReqOptDecorator: function (proxyReqOpts) {
@@ -86,6 +71,27 @@ app.use('/api/consultant-inscription', proxy(process.env.API_HOST, {
   },
   proxyReqPathResolver: function () {
     return '/api/v1/sg/consultant-inscription';
+  },
+  userResDecorator: function (proxyRes, proxyResData, userReq, userRes) {
+    if (proxyRes.statusCode === 201) {
+      const dataString = proxyResData.toString('utf8');
+      const data = JSON.parse(dataString);
+      const html = makeHTML(data);
+
+      setTimeout(() => {
+        const mailOptions = {
+          from: email_auth.user,
+          to: email_sg,
+          subject: 'Nouvelle Inscription - Consultant',
+          html: html,
+        }
+        const emailSender = new EmailSender(process.env.EMAIL_PROVIDER, email_auth);
+        emailSender.sendEmail(mailOptions);
+
+      }, 3000);
+    }
+
+    return proxyResData;
   }
 }));
 
@@ -131,7 +137,7 @@ const loginKeros = async (callback) => {
 
   const relogin = () => {
     console.log('Failed to login to keros, trying again in 30s');
-    setTimeout(() => { loginKeros() }, 30000);
+    setTimeout(() => { loginKeros(callback) }, 30000);
   }
 
   fetch(loginpath,
@@ -151,7 +157,7 @@ const loginKeros = async (callback) => {
             if (callback) callback();
           })
           .catch(() => {
-            
+
           })
       } else {
         relogin();
@@ -178,17 +184,50 @@ const getMeta = async (info) => {
   return data;
 }
 
-const handleCheckoutSession = async (session) => {
+const handleCheckoutSession = (session) => {
   console.log('Receiving checkout session');
   console.log('Stripe checkout session received from ' + session.client_reference_id);
+  try {
+    fetch((process.env.API_HOST + '/api/v1/sg/membre-inscription/' + session.client_reference_id + '/confirm-payment'), {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: api_token
+      }
+    }).then((res) => {
+      if (res.ok) {
+        sendEmailMember(session.client_reference_id)
+      }
+    })
+  } catch (e) {
+    console.log('Error confirming payment')
+  }
+}
 
-  const result = await fetch((process.env.API_HOST + '/api/v1/sg/membre-inscription/' + session.client_reference_id + '/confirm-payment'), {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: api_token
-    }
-  })
+const sendEmailMember = (id) => {
+  try {
+    fetch((process.env.API_HOST + '/api/v1/sg/membre-inscription/' + id), {
+      headers: { Authorization: api_token }
+    })
+      .then((res) => {
+        if (res.ok) {
+          res.json()
+            .then((member) => {
+              const html = makeHTML(member);
+              const mailOptions = {
+                from: email_auth.user,
+                to: email_sg,
+                subject: 'Nouvelle Inscription - Membre',
+                html: html,
+              }
+              const emailSender = new EmailSender(process.env.EMAIL_PROVIDER, email_auth);
+              emailSender.sendEmail(mailOptions);
+            })
+        }
+      })
+  } catch (e) {
+    console.log('Error sending member inscription email')
+  }
 }
 
 /* Server */

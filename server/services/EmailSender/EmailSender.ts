@@ -15,7 +15,7 @@ interface MailOptions {
   attachments?: Attachment[]
 }
 
-class EmailSender {
+export class EmailSender {
 
   service: string;
   auth: Auth;
@@ -73,5 +73,3 @@ class EmailSender {
 
   }
 }
-
-export default EmailSender;

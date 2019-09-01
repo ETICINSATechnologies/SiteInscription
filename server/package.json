@@ -14,6 +14,7 @@
   "author": "Sadsitha Lokuge",
   "license": "ISC",
   "dependencies": {
+    "@types/nodemailer": "^6.2.1",
     "@types/sqlite3": "^3.1.5",
     "busboy": "^0.3.1",
     "concurrently": "^4.1.1",
@@ -21,8 +22,10 @@
     "express": "^4.17.1",
     "express-http-proxy": "^1.5.1",
     "file-system": "^2.2.2",
+    "flat": "^4.1.0",
     "form-data": "^2.5.0",
     "node-fetch": "^2.6.0",
+    "nodemailer": "^6.3.0",
     "nodemon": "^1.19.1",
     "sqlite3": "^4.1.0",
     "stripe": "^6.36.0"
