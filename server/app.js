@@ -76,7 +76,6 @@ app.use('/api/consultant-inscription', proxy(process.env.API_HOST, {
     if (proxyRes.statusCode === 201) {
       const dataString = proxyResData.toString('utf8');
       const data = JSON.parse(dataString);
-
       setTimeout(() => {
         sendEmailConsultant(data)
       }, 3000)
@@ -203,11 +202,11 @@ const sendEmailMember = (id) => {
         if (res.ok) {
           res.json()
             .then((member) => {
-              const html = makeHTML(member);
+              const html = makeHTML(member, false);
               const mailOptions = {
                 from: email_auth.user,
                 to: email_sg,
-                subject: 'Nouvelle Inscription - Membre',
+                subject: `Nouvelle Inscription - Membre (ID - ${id})`,
                 html: html,
               }
               const emailSender = new EmailSender(process.env.EMAIL_PROVIDER, email_auth);
@@ -223,7 +222,7 @@ const sendEmailMember = (id) => {
 const sendEmailConsultant = async (data) => {
   const id = data.id
   //make html body
-  const html = makeHTML(data);
+  const html = makeHTML(data, true);
   //make attachments
   const documentList = ['documentIdentity', 'documentScolaryCertificate', 'documentRIB', 'documentVitaleCard', 'documentCVEC', 'documentResidencePermit']
   const attachments = []
@@ -237,28 +236,37 @@ const sendEmailConsultant = async (data) => {
     const callback = (error, response, body) => {
       if (!error && response.statusCode == 200) {
         let filename = documentName;
+        let filesize = 0;
         try {
           const contentDispo = response.headers['content-disposition']
           const startIndex = contentDispo.indexOf("filename=") + 10;
           const endIndex = contentDispo.length - 1;
           const headerFilename = contentDispo.substring(startIndex, endIndex);
           if (headerFilename) filename += '.' + headerFilename.split('.')[1];
+          const contentLength = response.headers['content-length']
+          if (contentLength) filesize = Number(contentLength);
         } catch (e) {
           console.log('Error getting filename', e.message)
         }
         attachments.push({
           filename: filename,
-          content: body
+          content: body,
+          filesize: filesize
         })
       }
     }
-    await rp(options, callback);
+    try {
+      await rp(options, callback);
+    } catch (e) {
+      console.log('Warning : Error getting a file')
+    }
+
   }
   //make email
   const mailOptions = {
     from: email_auth.user,
     to: email_sg,
-    subject: 'Nouvelle Inscription - Consultant',
+    subject: `Nouvelle Inscription - Consultant (ID - ${id})`,
     html: html,
     attachments: attachments
   }
@@ -267,6 +275,16 @@ const sendEmailConsultant = async (data) => {
 }
 
 const testFunction = () => {
+  const url = `${process.env.API_HOST}/api/v1/sg/consultant-inscription/${9}`
+  fetch(url, {
+    headers: { Authorization: api_token }
+  }).then((res) => {
+    if (res.ok) {
+      res.json().then(data => {
+        sendEmailConsultant(data)
+      })
+    }
+  })
 }
 
 /* Server */
@@ -277,5 +295,5 @@ app.listen(port, (req, res) => {
   setInterval(() => {
     loginKeros(refreshMeta);
   }, refreshInterval);
-
+  //setTimeout(testFunction, 3000);
 })
