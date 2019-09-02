@@ -4,8 +4,22 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.prod
+    volumes: 
+      - static_volume:/usr/src/app/client/build/
     ports:
-      - 1337:5000
+      - 5000
+    networks:
+      - inscriptionnet
+    restart: unless-stopped
+  
+  nginx:
+    build: ./nginx
+    volumes: 
+      - static_volume:/usr/src/app/client/build/
+    ports:
+      - 1337:1337
+    depends_on:
+      - app
     networks:
       - inscriptionnet
     restart: unless-stopped
@@ -17,3 +31,6 @@ networks:
       driver: default
       config:
         - subnet: 192.164.1.5/24
+
+volumes:
+  static_volume:

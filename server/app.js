@@ -61,7 +61,8 @@ app.use('/api/membre-inscription', proxy(process.env.API_HOST, {
   },
   proxyReqPathResolver: function () {
     return '/api/v1/sg/membre-inscription';
-  }
+  },
+  limit: '50mb'
 }));
 
 app.use('/api/consultant-inscription', proxy(process.env.API_HOST, {
@@ -81,7 +82,8 @@ app.use('/api/consultant-inscription', proxy(process.env.API_HOST, {
       }, 3000)
     }
     return proxyResData;
-  }
+  },
+  limit: '50mb'
 }));
 
 app.post('/api/webhook', bodyParser.raw({ type: 'application/json' }), (req, res) => {
