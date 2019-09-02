@@ -1,16 +1,16 @@
 const EmailSender = require('./services/EmailSender/EmailSender').EmailSender;
 const makeHTML = require('./services/Helpers/EmailHelpers').makeHTML;
+
 const express = require('express')
 const app = express();
 const path = require('path');
 const fetch = require('node-fetch');
-const Busboy = require('busboy');
 const bodyParser = require('body-parser');
-const FormData = require('form-data');
 const fs = require('file-system');
 const port = process.env.PORT || 5000;
 const stripe = require("stripe")(process.env.STRIPE_SK);
 const proxy = require('express-http-proxy');
+const rp = require('request-promise-native');
 
 require('dotenv').config();
 
@@ -32,7 +32,7 @@ const email_auth = {
   pass: process.env.EMAIL_PASS
 }
 
-const email_sg = 'slokuge97@gmail.com';
+const email_sg = process.env.EMAIL_SG;
 
 /* Static File Declaration */
 
@@ -76,21 +76,11 @@ app.use('/api/consultant-inscription', proxy(process.env.API_HOST, {
     if (proxyRes.statusCode === 201) {
       const dataString = proxyResData.toString('utf8');
       const data = JSON.parse(dataString);
-      const html = makeHTML(data);
 
       setTimeout(() => {
-        const mailOptions = {
-          from: email_auth.user,
-          to: email_sg,
-          subject: 'Nouvelle Inscription - Consultant',
-          html: html,
-        }
-        const emailSender = new EmailSender(process.env.EMAIL_PROVIDER, email_auth);
-        emailSender.sendEmail(mailOptions);
-
-      }, 3000);
+        sendEmailConsultant(data)
+      }, 3000)
     }
-
     return proxyResData;
   }
 }));
@@ -230,6 +220,55 @@ const sendEmailMember = (id) => {
   }
 }
 
+const sendEmailConsultant = async (data) => {
+  const id = data.id
+  //make html body
+  const html = makeHTML(data);
+  //make attachments
+  const documentList = ['documentIdentity', 'documentScolaryCertificate', 'documentRIB', 'documentVitaleCard', 'documentCVEC', 'documentResidencePermit']
+  const attachments = []
+  for (const documentName of documentList) {
+    const url = `${process.env.API_HOST}/api/v1/sg/consultant-inscription/${id}/document/${documentName}`;
+    const options = {
+      url: url,
+      headers: { Authorization: api_token },
+      encoding: null
+    };
+    const callback = (error, response, body) => {
+      if (!error && response.statusCode == 200) {
+        let filename = documentName;
+        try {
+          const contentDispo = response.headers['content-disposition']
+          const startIndex = contentDispo.indexOf("filename=") + 10;
+          const endIndex = contentDispo.length - 1;
+          const headerFilename = contentDispo.substring(startIndex, endIndex);
+          if (headerFilename) filename += '.' + headerFilename.split('.')[1];
+        } catch (e) {
+          console.log('Error getting filename', e.message)
+        }
+        attachments.push({
+          filename: filename,
+          content: body
+        })
+      }
+    }
+    await rp(options, callback);
+  }
+  //make email
+  const mailOptions = {
+    from: email_auth.user,
+    to: email_sg,
+    subject: 'Nouvelle Inscription - Consultant',
+    html: html,
+    attachments: attachments
+  }
+  const emailSender = new EmailSender(process.env.EMAIL_PROVIDER, email_auth);
+  emailSender.sendEmail(mailOptions);
+}
+
+const testFunction = () => {
+}
+
 /* Server */
 
 app.listen(port, (req, res) => {
@@ -238,4 +277,5 @@ app.listen(port, (req, res) => {
   setInterval(() => {
     loginKeros(refreshMeta);
   }, refreshInterval);
+
 })
