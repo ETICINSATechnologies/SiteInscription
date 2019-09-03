@@ -26,34 +26,40 @@ export const initiateMetaInfo = () => {
     )
 }
 
-export const handleSubmit = (event: React.FormEvent, person: Person, isConsultant: boolean) => {
+export const handleSubmit = (event: React.FormEvent, person: Person, isConsultant: boolean, setIsUploading: React.Dispatch<React.SetStateAction<boolean>>) => {
     event.preventDefault();
     let form_data: FormData = person.getFormData(person);
-
-    if (isConsultant) {
-        fetch('api/consultant-inscription', {
-            method: 'POST',
-            body: form_data
-        })
-            .then(res => {
-                if (res.ok) {
-                    window.location.href = '/landing-consultant'
-                } else {
-                    alert('Vérifie tes informations');
-                }
-            });
-    } else {
-        fetch('api/membre-inscription', {
-            method: 'POST',
-            body: form_data
-        })
-            .then(res => {
-                if (res.ok) {
-                    res.json().then(member => payment(member))
-                } else {
-                    alert('Vérifie tes informations');
-                }
-            });
+    setIsUploading(true)
+    try {
+        if (isConsultant) {
+            fetch('api/consultant-inscription', {
+                method: 'POST',
+                body: form_data
+            })
+                .then(res => {
+                    setIsUploading(false)
+                    if (res.ok) {
+                        window.location.href = '/landing-consultant'
+                    } else {
+                        alert('Vérifie tes informations');
+                    }
+                });
+        } else {
+            fetch('api/membre-inscription', {
+                method: 'POST',
+                body: form_data
+            })
+                .then(res => {
+                    setIsUploading(false)
+                    if (res.ok) {
+                        res.json().then(member => payment(member))
+                    } else {
+                        alert('Vérifie tes informations');
+                    }
+                });
+        }
+    } catch (e) {
+        console.log(e.message)
     }
 }
 

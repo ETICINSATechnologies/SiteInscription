@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "./inscription.css";
-import { Button, Form, Container, Row, Col, Modal } from "react-bootstrap";
+import { Button, Form, Container, Row, Col, Modal, Spinner } from "react-bootstrap";
 import *  as helpers from "./helpers";
 import * as interfaces from "./interfaces";
 import { Link } from "react-router-dom";
@@ -19,6 +19,8 @@ const Inscription = (props: interfaces.InscriptionProps) => {
   const [metaInfo, setMetaInfo] = useState(helpers.initiateMetaInfo());
 
   const [showModal, setShowModal] = useState(false);
+
+  const [isUploading, setIsUploading] = useState(false);
 
   useEffect(() => {
     refreshMetaInfo()
@@ -473,7 +475,7 @@ const Inscription = (props: interfaces.InscriptionProps) => {
       <React.Fragment>
         <Col md>
           {firstName} {lastName} {genderId} {birthday} {email} {departmentId} {phoneNumber}
-          {outYear} {nationalityId} {line1} {line2} {city} {postalCode} {countryId} 
+          {outYear} {nationalityId} {line1} {line2} {city} {postalCode} {countryId}
         </Col>
         <Col md>
           {socialSecurityNumber} {documentIdentity}
@@ -486,6 +488,18 @@ const Inscription = (props: interfaces.InscriptionProps) => {
     )
   }
 
+  const renderUploadingSpinner = () => {
+    if (isUploading) {
+      return (
+        <div id="uploading_container">
+          <Spinner animation="border" variant="info" role="status">
+            <span className="sr-only">Loading...</span>
+          </Spinner>
+        </div>
+      )
+    }
+    return null
+  }
 
   return (
     <Container className="background-is-white padded-medium is-rounded has-vertical-margins-desktop">
@@ -495,7 +509,7 @@ const Inscription = (props: interfaces.InscriptionProps) => {
       <Row>
         <Col><h4 className="text-center">{props.isConsultant ? "Inscription Consultant" : "Inscription Membre Actif"}</h4></Col>
       </Row>
-      <Form onSubmit={(event: React.FormEvent<Element>) => helpers.handleSubmit(event, inscriptionState.person, props.isConsultant)}>
+      <Form onSubmit={(event: React.FormEvent<Element>) => helpers.handleSubmit(event, inscriptionState.person, props.isConsultant, setIsUploading)}>
         <Row>
           {props.isConsultant ? renderConsultant() : renderMember()}
         </Row>
@@ -520,6 +534,7 @@ const Inscription = (props: interfaces.InscriptionProps) => {
         </Modal.Footer>
       </Modal>
 
+      {renderUploadingSpinner()}
     </Container >
   );
 };
