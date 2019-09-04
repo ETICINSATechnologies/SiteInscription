@@ -73,17 +73,20 @@ const Inscription = (props: interfaces.InscriptionProps) => {
     if (inscriptionState.person.hasOwnProperty(property)) {
       let reader = new FileReader();
       let file = (event.target as HTMLFormElement).files[0];
-
-      reader.onloadend = () => {
-        setInscriptionState({
-          ...inscriptionState,
-          person: {
-            ...inscriptionState.person,
-            [property]: file
-          }
-        });
+      if (helpers.checkFileExtension(file) && helpers.checkFileSize(file)) {
+        reader.onloadend = () => {
+          setInscriptionState({
+            ...inscriptionState,
+            person: {
+              ...inscriptionState.person,
+              [property]: file
+            }
+          });
+        }
+        reader.readAsDataURL(file);
+      } else {
+        (event.target as HTMLFormElement).value = '';
       }
-      reader.readAsDataURL(file);
     }
   };
 
@@ -136,7 +139,8 @@ const Inscription = (props: interfaces.InscriptionProps) => {
         type="text"
         required
         pattern="^[a-zA-Zàâçéèêëîïôûùüÿñæœ .-]*$"
-        maxLength={20}
+        placeholder="Hubert"
+        maxLength={50}
         onChange={handleChangeInput as any}
       />
     </Form.Group>
@@ -149,7 +153,8 @@ const Inscription = (props: interfaces.InscriptionProps) => {
         className="lastName"
         type="text"
         required
-        maxLength={20}
+        maxLength={50}
+        placeholder="Bonisseur de la Bath"
         pattern="^[a-zA-Zàâçéèêëîïôûùüÿñæœ .-]*$"
         onChange={handleChangeInput as any}
       />
@@ -177,6 +182,7 @@ const Inscription = (props: interfaces.InscriptionProps) => {
         type="text"
         required
         pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$"
+        placeholder="hubert.bonisseur@sdece.fr"
         onChange={handleChangeInput as any}
       />
     </Form.Group>
@@ -216,6 +222,7 @@ const Inscription = (props: interfaces.InscriptionProps) => {
         className="phoneNumber"
         type="tel"
         pattern="[0]{1}[0-9]{9}"
+        placeholder="0669361420"
         onChange={handleChangeInput as any}
       />
     </Form.Group>
@@ -254,6 +261,7 @@ const Inscription = (props: interfaces.InscriptionProps) => {
       <Form.Control
         className="line1"
         onChange={handleChangeInput as any}
+        placeholder="20 Avenue Albert Einstein"
         required
       />
     </Form.Group>
@@ -266,6 +274,7 @@ const Inscription = (props: interfaces.InscriptionProps) => {
       </Form.Label>
       <Form.Control
         className="line2"
+        placeholder="Résidence H"
         onChange={handleChangeInput as any}
       />
     </Form.Group>
@@ -278,6 +287,7 @@ const Inscription = (props: interfaces.InscriptionProps) => {
         className="city"
         onChange={handleChangeInput as any}
         required
+        placeholder="Villeurbanne"
         pattern="^[a-zA-Zàâçéèêëîïôûùüÿñæœ .-]*$"
       />
     </Form.Group>
@@ -290,6 +300,7 @@ const Inscription = (props: interfaces.InscriptionProps) => {
         className="postalCode"
         onChange={handleChangeInput as any}
         required
+        placeholder="69100"
         pattern="[0-9]{5}"
       />
     </Form.Group>
@@ -326,6 +337,8 @@ const Inscription = (props: interfaces.InscriptionProps) => {
       <Form.Control
         className="socialSecurityNumber"
         required
+        pattern="[0-9]{15}"
+        placeholder="294037512000522"
         onChange={handleChangeInput as any}
       />
     </Form.Group>
@@ -334,35 +347,35 @@ const Inscription = (props: interfaces.InscriptionProps) => {
   const documentIdentity = (
     <Form.Group controlId="documentIdentity">
       <Form.Label className="required">Pièce d'identité ou passeport</Form.Label>
-      <Form.Control className='documentIdentity' onChange={handleChangeFile as any} type="file" required />
+      <Form.Control className='documentIdentity' onChange={handleChangeFile as any} type="file" required accept={helpers.acceptedExtensions} />
     </Form.Group>
   )
 
   const documentScolaryCertificate = (
     <Form.Group controlId="documentScolaryCertificate">
       <Form.Label className="required">Certificat de scolarité (de l'année courante)</Form.Label>
-      <Form.Control className='documentScolaryCertificate' onChange={handleChangeFile as any} type="file" required />
+      <Form.Control className='documentScolaryCertificate' onChange={handleChangeFile as any} type="file" required accept={helpers.acceptedExtensions} />
     </Form.Group>
   )
 
   const documentVitaleCard = (
     <Form.Group controlId="documentVitaleCard">
       <Form.Label className="required">Carte Vitale</Form.Label>
-      <Form.Control className='documentVitaleCard' onChange={handleChangeFile as any} type="file" required />
+      <Form.Control className='documentVitaleCard' onChange={handleChangeFile as any} type="file" required accept={helpers.acceptedExtensions} />
     </Form.Group>
   )
 
   const documentRIB = (
     <Form.Group controlId="documentRIB">
       <Form.Label className="required">RIB</Form.Label>
-      <Form.Control className='documentRIB' onChange={handleChangeFile as any} type="file" required />
+      <Form.Control className='documentRIB' onChange={handleChangeFile as any} type="file" required accept={helpers.acceptedExtensions} />
     </Form.Group>
   )
 
   const documentCVEC = (
     <Form.Group controlId="documentCVEC">
       <Form.Label className="required">CVEC (de l'année courante)</Form.Label>
-      <Form.Control className='documentCVEC' onChange={handleChangeFile as any} type="file" required />
+      <Form.Control className='documentCVEC' onChange={handleChangeFile as any} type="file" required accept={helpers.acceptedExtensions} />
     </Form.Group>
   )
 
@@ -373,7 +386,7 @@ const Inscription = (props: interfaces.InscriptionProps) => {
       <br />
         <button className='btn-like-link' onClick={handleToggleModal}>Clique-ici pour plus d'information</button>
       </Form.Label>
-      <Form.Control className='documentResidencePermit' onChange={handleChangeFile as any} type="file" />
+      <Form.Control className='documentResidencePermit' onChange={handleChangeFile as any} type="file" accept={helpers.acceptedExtensions} />
     </Form.Group>
   )
 

@@ -16,6 +16,11 @@ Form.Control:invalid {
     color: red;
 }
 
+::placeholder {
+    color: grey;
+    font-size: 0.9em;
+}
+
 .background-is-white {
     background-color: white;
 }
