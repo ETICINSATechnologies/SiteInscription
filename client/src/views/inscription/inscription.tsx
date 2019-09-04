@@ -508,6 +508,8 @@ const Inscription = (props: interfaces.InscriptionProps) => {
           <Spinner animation="border" variant="info" role="status">
             <span className="sr-only">Loading...</span>
           </Spinner>
+          <p>Traitement en cours</p>
+          <p>Ceci peut prendre un peu de temps selon la taille de fichiers</p>
         </div>
       )
     }

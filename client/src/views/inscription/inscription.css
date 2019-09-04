@@ -111,8 +111,15 @@ Form.Control:invalid {
     top: 0;
     left: 0;
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
     background-color: black;
     opacity: 0.8;
+}
+
+#uploading_container p {
+    color: #fff;
+    margin-bottom: 0;
+    text-align: center;
 }
