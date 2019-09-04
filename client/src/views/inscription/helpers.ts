@@ -134,9 +134,10 @@ const acceptedMimeTypes = ['application/msword', 'application/vnd.openxmlformats
 
 const maxFileSize = 9.9 * 1024 * 1024; //9.9mb in bytes
 
-export const checkFileSize = (file: File | Blob | undefined) => {
+export const checkFileSize = (file: File | Blob | undefined, setTotalFilesize: React.Dispatch<React.SetStateAction<number>>) => {
     if (file) {
         if (file.size <= maxFileSize) {
+            setTotalFilesize(previous => (previous + file.size))
             return true;
         } else {
             alert("Ce fichier est trop gros, la taille maximum pour un fichier est 10Mo");
@@ -158,4 +159,8 @@ export const checkFileExtension = (file: File | Blob | undefined) => {
         alert("Ce fichier n'est pas valide");
         return false;
     }
+}
+
+export const checkFile = (file: File | Blob | undefined, setTotalFilesize: React.Dispatch<React.SetStateAction<number>>) => {
+    return (checkFileSize(file, setTotalFilesize) && checkFileExtension(file))
 }

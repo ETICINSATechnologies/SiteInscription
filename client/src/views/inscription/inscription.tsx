@@ -22,6 +22,8 @@ const Inscription = (props: interfaces.InscriptionProps) => {
 
   const [isUploading, setIsUploading] = useState(false);
 
+  const [totalFilesize, setTotalFilesize] = useState(0);
+
   useEffect(() => {
     refreshMetaInfo()
   }, []);
@@ -73,7 +75,8 @@ const Inscription = (props: interfaces.InscriptionProps) => {
     if (inscriptionState.person.hasOwnProperty(property)) {
       let reader = new FileReader();
       let file = (event.target as HTMLFormElement).files[0];
-      if (helpers.checkFileExtension(file) && helpers.checkFileSize(file)) {
+      //if (helpers.checkFileExtension(file) && helpers.checkFileSize(file)) {
+      if (helpers.checkFile(file, setTotalFilesize)) {
         reader.onloadend = () => {
           setInscriptionState({
             ...inscriptionState,
