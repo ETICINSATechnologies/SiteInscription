@@ -28,42 +28,46 @@ export const initiateMetaInfo = () => {
 
 const errorMessage = "Il y a eu une erreur lors de l'inscription, vérifie que les informations sont au bon format. Si le problème persiste, contacte l'administrateur à responsable.dsi@etic-insa.com"
 
-export const handleSubmit = (event: React.FormEvent, person: Person, isConsultant: boolean, setIsUploading: React.Dispatch<React.SetStateAction<boolean>>) => {
+export const handleSubmit = (event: React.FormEvent, person: Person, isConsultant: boolean, setIsUploading: React.Dispatch<React.SetStateAction<boolean>>, totalFilesize: number) => {
     event.preventDefault();
-    let form_data: FormData = person.getFormData(person);
-    setIsUploading(true)
-    try {
-        if (isConsultant) {
-            fetch('api/consultant-inscription', {
-                method: 'POST',
-                body: form_data
-            })
-                .then(res => {
-                    setIsUploading(false)
-                    if (res.ok) {
-                        window.location.href = '/landing-consultant'
-                    } else {
-                        alert(errorMessage);
-                    }
-                });
-        } else {
-            fetch('api/membre-inscription', {
-                method: 'POST',
-                body: form_data
-            })
-                .then(res => {
-                    setIsUploading(false)
-                    if (res.ok) {
-                        res.json().then(member => payment(member))
-                    } else {
-                        alert(errorMessage);
-                    }
-                });
+    if (totalFilesize > maxTotalSize) {
+        alert('Les fichiers sont trop gros, la taille maximale pour tout les fichiers est 50Mo');
+    } else {
+        let form_data: FormData = person.getFormData(person);
+        setIsUploading(true)
+        try {
+            if (isConsultant) {
+                fetch('api/consultant-inscription', {
+                    method: 'POST',
+                    body: form_data
+                })
+                    .then(res => {
+                        setIsUploading(false)
+                        if (res.ok) {
+                            window.location.href = '/landing-consultant'
+                        } else {
+                            alert(errorMessage);
+                        }
+                    });
+            } else {
+                fetch('api/membre-inscription', {
+                    method: 'POST',
+                    body: form_data
+                })
+                    .then(res => {
+                        setIsUploading(false)
+                        if (res.ok) {
+                            res.json().then(member => payment(member))
+                        } else {
+                            alert(errorMessage);
+                        }
+                    });
+            }
+        } catch (e) {
+            console.log(e.message)
+            setIsUploading(false)
+            alert(errorMessage);
         }
-    } catch (e) {
-        console.log(e.message)
-        setIsUploading(false)
-        alert(errorMessage);
     }
 }
 
@@ -133,6 +137,8 @@ export const acceptedExtensions = ".pdf,.jpg,.jpeg,.png,.gif,.doc,.docx";
 const acceptedMimeTypes = ['application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'application/pdf', 'image/png', 'image/gif', 'image/jpeg', 'image/jpg'];
 
 const maxFileSize = 9.9 * 1024 * 1024; //9.9mb in bytes
+
+const maxTotalSize = 49.5 * 1024 * 1024; //49.5mb in bytes
 
 export const checkFileSize = (file: File | Blob | undefined, setTotalFilesize: React.Dispatch<React.SetStateAction<number>>) => {
     if (file) {

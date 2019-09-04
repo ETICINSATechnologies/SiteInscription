@@ -527,7 +527,7 @@ const Inscription = (props: interfaces.InscriptionProps) => {
       <Row>
         <Col><h4 className="text-center">{props.isConsultant ? "Inscription Consultant" : "Inscription Membre Actif"}</h4></Col>
       </Row>
-      <Form onSubmit={(event: React.FormEvent<Element>) => helpers.handleSubmit(event, inscriptionState.person, props.isConsultant, setIsUploading)}>
+      <Form onSubmit={(event: React.FormEvent<Element>) => helpers.handleSubmit(event, inscriptionState.person, props.isConsultant, setIsUploading, totalFilesize)}>
         <Row>
           {props.isConsultant ? renderConsultant() : renderMember()}
         </Row>
