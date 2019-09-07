@@ -1,5 +1,5 @@
 import React from "react";
-import { Person } from "../../model/Person";
+import { PersonInterface } from "../../model/Person";
 import * as interfaces from "./interfaces";
 import { defaultMember } from "../../model/Member";
 import { defaultConsultant } from "../../model/Consultant";
@@ -28,9 +28,9 @@ export const initiateMetaInfo = () => {
 
 const errorMessage = "Il y a eu une erreur lors de l'inscription, vérifie que les informations sont au bon format. Si le problème persiste, contacte l'administrateur à responsable.dsi@etic-insa.com"
 
-export const handleSubmit = (event: React.FormEvent, person: Person, isConsultant: boolean, setIsUploading: React.Dispatch<React.SetStateAction<boolean>>, totalFilesize: number) => {
+export const handleSubmit = (event: React.FormEvent, person: PersonInterface, isConsultant: boolean, setIsUploading: React.Dispatch<React.SetStateAction<boolean>>) => {
     event.preventDefault();
-    if (totalFilesize > maxTotalSize) {
+    if (person.calculateTotalFilesize(person) > maxTotalSize) {
         alert('Les fichiers sont trop gros, la taille maximale pour tout les fichiers est 50Mo');
     } else {
         let form_data: FormData = person.getFormData(person);
@@ -140,10 +140,9 @@ const maxFileSize = 9.9 * 1024 * 1024; //9.9mb in bytes
 
 const maxTotalSize = 49.5 * 1024 * 1024; //49.5mb in bytes
 
-export const checkFileSize = (file: File | Blob | undefined, setTotalFilesize: React.Dispatch<React.SetStateAction<number>>) => {
+export const checkFileSize = (file: File | Blob | undefined) => {
     if (file) {
         if (file.size <= maxFileSize) {
-            setTotalFilesize(previous => (previous + file.size))
             return true;
         } else {
             alert("Ce fichier est trop gros, la taille maximum pour un fichier est 10Mo");
@@ -167,6 +166,6 @@ export const checkFileExtension = (file: File | Blob | undefined) => {
     }
 }
 
-export const checkFile = (file: File | Blob | undefined, setTotalFilesize: React.Dispatch<React.SetStateAction<number>>) => {
-    return (checkFileSize(file, setTotalFilesize) && checkFileExtension(file))
+export const checkFile = (file: File | Blob | undefined) => {
+    return (checkFileSize(file) && checkFileExtension(file))
 }

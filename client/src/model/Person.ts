@@ -13,7 +13,7 @@ interface PersonGeneral {
     droitImage: boolean
     [key: string]: any
 }
-export interface Person extends PersonGeneral {
+export interface PersonInterface extends PersonGeneral {
     line1: string
     line2?: string
     city: string

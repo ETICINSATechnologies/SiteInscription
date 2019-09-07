@@ -1,6 +1,6 @@
-import { Person, PersonUpdate } from "./Person";
+import { PersonInterface, PersonUpdate } from "./Person";
 
-export interface MemberInterface extends Person {
+export interface MemberInterface extends PersonInterface {
     wantedPoleId: number
 }
 
@@ -77,6 +77,11 @@ export class Member implements MemberInterface {
         // add hasPaid
         form_data.append('hasPaid', 'false');
         return form_data
+    }
+
+    calculateTotalFilesize = (memberInterface? : MemberInterface) => {
+        let totalSize = 0;
+        return totalSize;
     }
 
 }

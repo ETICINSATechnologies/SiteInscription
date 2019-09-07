@@ -1,6 +1,6 @@
-import { Person, PersonUpdate } from "./Person";
+import { PersonInterface, PersonUpdate } from "./Person";
 
-export interface ConsultantInterface extends Person {
+export interface ConsultantInterface extends PersonInterface {
     isApprentice: boolean
     socialSecurityNumber: string
     documentIdentity: File
@@ -91,10 +91,10 @@ export class Consultant implements ConsultantInterface {
             documentRIB: consultantInterface.documentRIB,
             documentCVEC: consultantInterface.documentCVEC,
             documentVitaleCard: consultantInterface.documentVitaleCard,
-            'address[line1]' :  consultantInterface.line1,
-            'address[city]' :  consultantInterface.city,
-            'address[postalCode]' :  consultantInterface.postalCode,
-            'address[countryId]' :  consultantInterface.countryId,
+            'address[line1]': consultantInterface.line1,
+            'address[city]': consultantInterface.city,
+            'address[postalCode]': consultantInterface.postalCode,
+            'address[countryId]': consultantInterface.countryId,
         } as ConsultantUpdate;
 
         if (consultantInterface.phoneNumber) retConsultant.phoneNumber = consultantInterface.phoneNumber
@@ -114,6 +114,18 @@ export class Consultant implements ConsultantInterface {
 
         return form_data;
     }
+
+    calculateTotalFilesize = (consultantInterface : ConsultantInterface) => {
+        let totalSize = 0;
+        let person = consultantInterface;
+        for (let key in person) {
+            if (person[key] instanceof File) {
+                let file: File = person[key];
+                totalSize += file.size;
+            }
+        }
+        return totalSize;
+    }
 }
 
 export let defaultConsultant = new Consultant({
@@ -129,5 +141,5 @@ export let defaultConsultant = new Consultant({
     genderId: 3,
     droitImage: false,
     isApprentice: false,
-    socialSecurityNumber:'',
+    socialSecurityNumber: '',
 } as ConsultantInterface);

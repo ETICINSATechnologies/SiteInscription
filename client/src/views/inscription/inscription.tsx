@@ -22,8 +22,6 @@ const Inscription = (props: interfaces.InscriptionProps) => {
 
   const [isUploading, setIsUploading] = useState(false);
 
-  const [totalFilesize, setTotalFilesize] = useState(0);
-
   useEffect(() => {
     refreshMetaInfo()
   }, []);
@@ -76,7 +74,7 @@ const Inscription = (props: interfaces.InscriptionProps) => {
       let reader = new FileReader();
       let file = (event.target as HTMLFormElement).files[0];
       //if (helpers.checkFileExtension(file) && helpers.checkFileSize(file)) {
-      if (helpers.checkFile(file, setTotalFilesize)) {
+      if (helpers.checkFile(file)) {
         reader.onloadend = () => {
           setInscriptionState({
             ...inscriptionState,
@@ -527,7 +525,7 @@ const Inscription = (props: interfaces.InscriptionProps) => {
       <Row>
         <Col><h4 className="text-center">{props.isConsultant ? "Inscription Consultant" : "Inscription Membre Actif"}</h4></Col>
       </Row>
-      <Form onSubmit={(event: React.FormEvent<Element>) => helpers.handleSubmit(event, inscriptionState.person, props.isConsultant, setIsUploading, totalFilesize)}>
+      <Form onSubmit={(event: React.FormEvent<Element>) => helpers.handleSubmit(event, inscriptionState.person, props.isConsultant, setIsUploading)}>
         <Row>
           {props.isConsultant ? renderConsultant() : renderMember()}
         </Row>

@@ -2,10 +2,10 @@ import { Department } from "../../model/Department";
 import { Country } from "../../model/Country";
 import { Pole } from "../../model/Pole";
 import { Gender } from "../../model/Gender";
-import { Person } from "../../model/Person";
+import { PersonInterface } from "../../model/Person";
 
 export interface InscriptionState {
-    person: Person;
+    person: PersonInterface;
     showModal: boolean;
 }
 
