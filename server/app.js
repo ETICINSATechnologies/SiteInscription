@@ -11,6 +11,7 @@ const port = process.env.PORT || 5000;
 const stripe = require("stripe")(process.env.STRIPE_SK);
 const proxy = require('express-http-proxy');
 const rp = require('request-promise-native');
+const formidable = require('formidable');
 
 require('dotenv').config();
 
@@ -54,9 +55,25 @@ app.get('/api/meta', (req, res) => {
   res.send(keros_meta);
 })
 
-app.post('/api/membre-inscription/:id/signature', (req,res) => {
+app.post('/api/membre-inscription/:id/signature', (req, res) => {
   console.log(`Received signature from ${req.params.id}`)
-  res.status(200).end()
+  new formidable.IncomingForm().parse(req)
+    .on('fileBegin', (name, file) => {
+      file.path = __dirname + `/storage/signatures/${req.params.id}.png`
+    })
+    .on('file', (name, file) => {
+      console.log('Uploaded file', name)
+    })
+    .on('aborted', () => {
+      console.error('Request aborted by the user')
+    })
+    .on('error', (err) => {
+      console.error('Error uploading signature', err)
+      throw err
+    })
+    .on('end', () => {
+      res.end()
+    })
 });
 
 app.use('/api/membre-inscription', proxy(process.env.API_HOST, {
