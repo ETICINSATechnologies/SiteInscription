@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import Signature from "../../components/Signature/Signature";
 import "./inscription.css";
 import { Button, Form, Container, Row, Col, Modal, Spinner } from "react-bootstrap";
 import *  as helpers from "./helpers";
@@ -19,6 +20,8 @@ const Inscription = (props: interfaces.InscriptionProps) => {
   const [metaInfo, setMetaInfo] = useState(helpers.initiateMetaInfo());
 
   const [showModal, setShowModal] = useState(false);
+
+  const [showSignatureModal, setShowSignatureModal] = useState(true);
 
   const [isUploading, setIsUploading] = useState(false);
 
@@ -51,7 +54,7 @@ const Inscription = (props: interfaces.InscriptionProps) => {
         }
       });
     }
-  };
+  }
 
   const handleChangeCheckbox = (event: React.ChangeEvent) => {
     event.persist();
@@ -89,10 +92,18 @@ const Inscription = (props: interfaces.InscriptionProps) => {
         (event.target as HTMLFormElement).value = '';
       }
     }
-  };
+  }
 
   const handleToggleModal = (event?: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     setShowModal((previous) => !previous);
+    if (event) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
+  }
+
+  const handleToggleSignatureModal = (event?: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    setShowSignatureModal((previous) => !previous);
     if (event) {
       event.preventDefault();
       event.stopPropagation();
@@ -517,6 +528,20 @@ const Inscription = (props: interfaces.InscriptionProps) => {
     return null
   }
 
+  const renderSignatureModal = () => {
+    const handleValider = (trimmedDataURL : string) => {
+      console.log(trimmedDataURL)
+      handleToggleSignatureModal()
+    }
+    return (
+      <Modal show={showSignatureModal} onHide={handleToggleSignatureModal} centered>
+        <Modal.Body>
+          <Signature handleValider={handleValider} />
+        </Modal.Body>
+      </Modal>
+    )
+  }
+
   return (
     <Container className="background-is-white padded-medium is-rounded has-vertical-margins-desktop">
       <Row className="has-margin-bottom">
@@ -551,6 +576,7 @@ const Inscription = (props: interfaces.InscriptionProps) => {
       </Modal>
 
       {renderUploadingSpinner()}
+      {renderSignatureModal()}
     </Container >
   );
 };

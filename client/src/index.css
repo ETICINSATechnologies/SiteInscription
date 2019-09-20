@@ -4,6 +4,12 @@
   --main-btn-color: #6BA37E;
 }
 
+/* body {
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+} */
+
 body, html {
   width: 100%;
   min-height: 100%;
