@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Signature from "../../components/Signature/Signature";
+import CustomModal from "../../components/Modal/Modal";
 import "./inscription.css";
 import { Button, Form, Container, Row, Col, Modal, Spinner } from "react-bootstrap";
 import *  as helpers from "./helpers";
@@ -21,7 +22,7 @@ const Inscription = (props: interfaces.InscriptionProps) => {
 
   const [showModal, setShowModal] = useState(false);
 
-  const [showSignatureModal, setShowSignatureModal] = useState(true);
+  const [showSignatureModal, setShowSignatureModal] = useState(false);
 
   const [isUploading, setIsUploading] = useState(false);
 
@@ -479,6 +480,19 @@ const Inscription = (props: interfaces.InscriptionProps) => {
     )
   }
 
+  const renderMakeSignature = () => {
+    return (
+      <React.Fragment>
+        <div className="text-center">
+          <Button onClick={() => { setShowSignatureModal(true) }}>
+            {"Signer"}
+          </Button>
+        </div>
+      </React.Fragment>
+
+    )
+  }
+
   const renderMember = () => {
     return (
       <React.Fragment>
@@ -489,7 +503,7 @@ const Inscription = (props: interfaces.InscriptionProps) => {
         <Col md>
           {city} {postalCode} {countryId} {wantedPoleId}
           {ri} {charte} {donnees} {droitImage}
-          {renderSubmit()}
+          {inscriptionState.person.signature ? renderSubmit() : renderMakeSignature()}
         </Col>
       </React.Fragment>
     )
@@ -529,16 +543,23 @@ const Inscription = (props: interfaces.InscriptionProps) => {
   }
 
   const renderSignatureModal = () => {
-    const handleValider = (trimmedDataURL : string) => {
-      console.log(trimmedDataURL)
+    const handleValider = (trimmedDataURL: string) => {
+      fetch(trimmedDataURL)
+        .then(res => res.blob())
+        .then(blob => {
+          setInscriptionState({
+            ...inscriptionState,
+            person: {
+              ...inscriptionState.person,
+              signature: blob
+            }
+          })
+        })
       handleToggleSignatureModal()
     }
+    const signatureContainer = <Signature handleValider={handleValider} />
     return (
-      <Modal show={showSignatureModal} onHide={handleToggleSignatureModal} centered>
-        <Modal.Body>
-          <Signature handleValider={handleValider} />
-        </Modal.Body>
-      </Modal>
+      <CustomModal children={signatureContainer} onClose={handleToggleSignatureModal} show={showSignatureModal} additionalClass={'signature_modal'} />
     )
   }
 

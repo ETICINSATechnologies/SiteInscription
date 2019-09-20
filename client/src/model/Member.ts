@@ -2,10 +2,12 @@ import { PersonInterface, PersonUpdate } from "./Person";
 
 export interface MemberInterface extends PersonInterface {
     wantedPoleId: number
+    signature: Blob
 }
 
 export interface MemberUpdate extends PersonUpdate {
     wantedPoleId: number
+    signature: Blob
 }
 
 export class Member implements MemberInterface {
@@ -25,8 +27,8 @@ export class Member implements MemberInterface {
     postalCode: number
     countryId: number
     droitImage: boolean
+    signature: Blob
     [key: string]: any
-
 
     constructor(memberInterface: MemberInterface) {
         this.firstName = memberInterface.firstName
@@ -42,6 +44,7 @@ export class Member implements MemberInterface {
         this.postalCode = memberInterface.postalCode
         this.countryId = memberInterface.countryId
         this.droitImage = memberInterface.droitImage
+        this.signature = memberInterface.signature
         if (memberInterface.phoneNumber) this.phoneNumber = memberInterface.phoneNumber
         if (memberInterface.outYear) this.outYear = memberInterface.outYear
         if (memberInterface.line2) this.line2 = memberInterface.line2
@@ -58,20 +61,25 @@ export class Member implements MemberInterface {
             nationalityId: memberInterface.nationalityId,
             wantedPoleId: memberInterface.wantedPoleId,
             droitImage: memberInterface.droitImage,
-            'address[line1]' :  memberInterface.line1,
-            'address[city]' :  memberInterface.city,
-            'address[postalCode]' :  memberInterface.postalCode,
-            'address[countryId]' :  memberInterface.countryId,
-
+            signature: memberInterface.signature,
+            'address[line1]': memberInterface.line1,
+            'address[city]': memberInterface.city,
+            'address[postalCode]': memberInterface.postalCode,
+            'address[countryId]': memberInterface.countryId,
         } as MemberUpdate;
 
-        if(memberInterface.phoneNumber) retMember.phoneNumber = memberInterface.phoneNumber
-        if(memberInterface.outYear) retMember.outYear = memberInterface.outYear
-        if(memberInterface.line2) retMember['address[line2]'] = memberInterface.line2
+        if (memberInterface.phoneNumber) retMember.phoneNumber = memberInterface.phoneNumber
+        if (memberInterface.outYear) retMember.outYear = memberInterface.outYear
+        if (memberInterface.line2) retMember['address[line2]'] = memberInterface.line2
 
         let form_data = new FormData()
         for (let key in retMember) {
-            form_data.append(key, retMember[key])
+            if (key === 'signature') {
+                // let blob: Blob = retMember[key];
+                // form_data.append(key, blob, 'signature.png');
+            } else {
+                form_data.append(key, retMember[key])
+            }
         }
 
         // add hasPaid
@@ -79,7 +87,14 @@ export class Member implements MemberInterface {
         return form_data
     }
 
-    calculateTotalFilesize = (memberInterface? : MemberInterface) => {
+    getSignatureFormData = (memberInterface: MemberInterface) => {
+        let form_data = new FormData()
+        let blob: Blob = memberInterface.signature;
+        form_data.append('signature', blob, 'signature.png');
+        return form_data
+    }
+
+    calculateTotalFilesize = (memberInterface?: MemberInterface) => {
         let totalSize = 0;
         return totalSize;
     }
@@ -98,5 +113,5 @@ export let defaultMember = new Member({
     postalCode: 0,
     countryId: 62,
     genderId: 3,
-    droitImage: false
+    droitImage: false,
 } as MemberInterface)

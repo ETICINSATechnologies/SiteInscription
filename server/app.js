@@ -54,6 +54,11 @@ app.get('/api/meta', (req, res) => {
   res.send(keros_meta);
 })
 
+app.post('/api/membre-inscription/:id/signature', (req,res) => {
+  console.log(`Received signature from ${req.params.id}`)
+  res.status(200).end()
+});
+
 app.use('/api/membre-inscription', proxy(process.env.API_HOST, {
   proxyReqOptDecorator: function (proxyReqOpts) {
     proxyReqOpts.headers['Authorization'] = api_token;

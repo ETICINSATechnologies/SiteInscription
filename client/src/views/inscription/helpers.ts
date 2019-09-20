@@ -50,14 +50,24 @@ export const handleSubmit = (event: React.FormEvent, person: PersonInterface, is
                         }
                     });
             } else {
+                const signature_form_data = person.getSignatureFormData(person)
                 fetch('api/membre-inscription', {
                     method: 'POST',
                     body: form_data
                 })
                     .then(res => {
-                        setIsUploading(false)
                         if (res.ok) {
-                            res.json().then(member => payment(member))
+                            res.json().then(member => {
+                                fetch(`api/membre-inscription/${member.id}/signature/`, {
+                                    method: 'POST',
+                                    body: signature_form_data
+                                }).then(res => {
+                                    setIsUploading(false)
+                                    if (res.ok) {
+                                        payment(member)
+                                    }
+                                })
+                            })
                         } else {
                             alert(errorMessage);
                         }
