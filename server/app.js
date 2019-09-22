@@ -1,5 +1,6 @@
 const EmailSender = require('./services/EmailSender/EmailSender').EmailSender;
 const makeHTML = require('./services/Helpers/EmailHelpers').makeHTML;
+const PDFFiller = require('./services/PDFFiller/PDFFiller').PDFFiller;
 
 const express = require('express')
 const app = express();
@@ -12,6 +13,7 @@ const stripe = require("stripe")(process.env.STRIPE_SK);
 const proxy = require('express-http-proxy');
 const rp = require('request-promise-native');
 const formidable = require('formidable');
+
 
 require('dotenv').config();
 
@@ -73,6 +75,7 @@ app.post('/api/membre-inscription/:id/signature', (req, res) => {
     })
     .on('end', () => {
       res.end()
+      addSignature()
     })
 });
 
@@ -209,7 +212,7 @@ const handleCheckoutSession = (session) => {
       }
     }).then((res) => {
       if (res.ok) {
-        sendEmailMember(session.client_reference_id)
+        prepareEmailMember(session.client_reference_id)
       }
     })
   } catch (e) {
@@ -217,7 +220,11 @@ const handleCheckoutSession = (session) => {
   }
 }
 
-const sendEmailMember = (id) => {
+const prepareEmailMember= (id) => {
+  makeFicheInscription(id)
+}
+
+const sendEmailMember = (id, attachments) => {
   try {
     fetch((process.env.API_HOST + '/api/v1/sg/membre-inscription/' + id), {
       headers: { Authorization: api_token }
@@ -232,6 +239,7 @@ const sendEmailMember = (id) => {
                 to: email_sg,
                 subject: `Nouvelle Inscription - Membre (ID - ${id})`,
                 html: html,
+                attachments: attachments
               }
               const emailSender = new EmailSender(process.env.EMAIL_PROVIDER, email_auth);
               emailSender.sendEmail(mailOptions);
@@ -298,17 +306,70 @@ const sendEmailConsultant = async (data) => {
   emailSender.sendEmail(mailOptions);
 }
 
-const testFunction = () => {
-  const url = `${process.env.API_HOST}/api/v1/sg/consultant-inscription/${9}`
-  fetch(url, {
-    headers: { Authorization: api_token }
-  }).then((res) => {
-    if (res.ok) {
-      res.json().then(data => {
-        sendEmailConsultant(data)
+const makeFicheInscription = (id) => {
+  const url = process.env.API_HOST + `/api/v1/sg/membre-inscription/${id}/document/1/generate`
+  try {
+    fetch(url, { headers: { Authorization: api_token } })
+      .then((res) => {
+        if (res.ok) {
+          res.json()
+            .then((data) => {
+              const file = fs.createWriteStream(__dirname + `/storage/fiches_inscription/${id}.pdf`);
+              fetch(data.location)
+                .then((response) => {
+                  if (response.ok) {
+                    response.body.pipe(file);
+                    res.body.on("error", (err) => {
+                      console.log(err)
+                    });
+                    file.on('finish', function () {
+                      file.close(() => { addSignature(id) });
+                    });
+                  } else {
+                    console.log("Error fetching fiche d'inscription, sending email without it")
+                    sendEmailMember(id, [])
+                  }
+                })
+            })
+        } else {
+          console.log("Error generating fiche d'inscription, sending email without it")
+          sendEmailMember(id, [])
+        }
       })
-    }
-  })
+  } catch (e) {
+    console.log(e)
+    console.log("Error generating fiche d'inscription, sending email without it")
+    sendEmailMember(id, [])
+  }
+
+}
+
+const addSignature = (id) => {
+  const originalPDF = __dirname + `/storage/fiches_inscription/${id}.pdf`
+  const newPDF = __dirname + `/storage/fiches_inscription_signed/${id}.pdf`
+  const signature = __dirname + `/storage/signatures/${id}.png`
+  const pdfFiller = new PDFFiller(originalPDF, newPDF)
+  pdfFiller.addSignature(signature, { x: 465, y: 730 }, 40)
+  pdfFiller.writeChanges()
+  const filename = 'fiche_inscription.pdf';
+  const filesize = fs.statSync(newPDF).size;
+  const content = fs.readFileSync(newPDF);
+  const attachments = [{ filename, filesize, content }]
+  sendEmailMember(id, attachments)
+}
+
+const testFunction = () => {
+  // const url = `${process.env.API_HOST}/api/v1/sg/consultant-inscription/${9}`
+  // fetch(url, {
+  //   headers: { Authorization: api_token }
+  // }).then((res) => {
+  //   if (res.ok) {
+  //     res.json().then(data => {
+  //       sendEmailConsultant(data)
+  //     })
+  //   }
+  // })
+  //makeFicheInscription(33)
 }
 
 /* Server */
@@ -319,5 +380,5 @@ app.listen(port, (req, res) => {
   setInterval(() => {
     loginKeros(refreshMeta);
   }, refreshInterval);
-  //setTimeout(testFunction, 3000);
+  //setTimeout(testFunction, 200);
 })
