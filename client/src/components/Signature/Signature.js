@@ -24,8 +24,8 @@ const Signature = (props) => {
             <p>Signe dans le cadre ci-dessous :</p>
             <SignaturePad canvasProps={{ className: 'sigPad' }} ref={sigPad} />
             <div className='signature_button_container'>
-                <Button onClick={clear}>Effacer</Button>
-                <Button onClick={trim}>Sauvegarder</Button>
+                <Button id={'signature_erase'} onClick={clear}>Effacer</Button>
+                <Button id={'signature_save'} onClick={trim}>Sauvegarder</Button>
             </div>
             {state.trimmedDataURL ? <img className={'sigImage'} src={state.trimmedDataURL} alt="Signature" /> : null}
         </>

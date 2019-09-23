@@ -122,14 +122,14 @@ app.post('/api/webhook', bodyParser.raw({ type: 'application/json' }), (req, res
 
       // Fulfill the purchase...
       handleCheckoutSession(session);
+
+      // Return a response to acknowledge receipt of the event
+      res.json({ received: true });
     }
   }
   catch (err) {
     res.status(400).end()
   }
-
-  // Return a response to acknowledge receipt of the event
-  res.json({ received: true });
 });
 
 if (process.env.NODE_ENV === 'production') {
