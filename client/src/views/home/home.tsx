@@ -27,7 +27,7 @@ const Home = () => {
                     Tu rencontres un problème ? Contacte nous : responsable.dsi@etic-insa.com
                 </Card.Text>
                 <Card.Text>
-                    Déjà inscrit et tu souhaites remplir la fiche d'inscription ? <a href="/api/file/fiche_inscription_membre">Clique-ici pour la télécharger</a>
+                    Tu cherches la fiche d'inscription ? <a href="/api/file/fiche_inscription_membre">Clique-ici pour la télécharger</a>
                 </Card.Text>
                 <a href='https://www.etic-insa.com/'><Card.Img src={Logo} alt='logo etic' className='logo' /></a>
             </Card.Body>
