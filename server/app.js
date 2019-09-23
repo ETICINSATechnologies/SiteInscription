@@ -75,7 +75,6 @@ app.post('/api/membre-inscription/:id/signature', (req, res) => {
     })
     .on('end', () => {
       res.end()
-      addSignature()
     })
 });
 
@@ -220,7 +219,7 @@ const handleCheckoutSession = (session) => {
   }
 }
 
-const prepareEmailMember= (id) => {
+const prepareEmailMember = (id) => {
   makeFicheInscription(id)
 }
 
@@ -309,33 +308,30 @@ const sendEmailConsultant = async (data) => {
 const makeFicheInscription = (id) => {
   const url = process.env.API_HOST + `/api/v1/sg/membre-inscription/${id}/document/1/generate`
   try {
-    fetch(url, { headers: { Authorization: api_token } })
-      .then((res) => {
-        if (res.ok) {
-          res.json()
-            .then((data) => {
-              const file = fs.createWriteStream(__dirname + `/storage/fiches_inscription/${id}.pdf`);
-              fetch(data.location)
-                .then((response) => {
-                  if (response.ok) {
-                    response.body.pipe(file);
-                    res.body.on("error", (err) => {
-                      console.log(err)
-                    });
-                    file.on('finish', function () {
-                      file.close(() => { addSignature(id) });
-                    });
-                  } else {
-                    console.log("Error fetching fiche d'inscription, sending email without it")
-                    sendEmailMember(id, [])
-                  }
-                })
-            })
-        } else {
-          console.log("Error generating fiche d'inscription, sending email without it")
-          sendEmailMember(id, [])
-        }
-      })
+    fetch(url, { headers: { Authorization: api_token } }).then((res) => {
+      if (res.ok) {
+        res.json().then((data) => {
+          const file = fs.createWriteStream(__dirname + `/storage/fiches_inscription/${id}.pdf`);
+          fetch(data.location).then((response) => {
+            if (response.ok) {
+              response.body.pipe(file);
+              res.body.on("error", (err) => {
+                console.log(err)
+              });
+              file.on('finish', function () {
+                file.close(() => { addSignature(id) });
+              });
+            } else {
+              console.log("Error fetching fiche d'inscription, sending email without it")
+              sendEmailMember(id, [])
+            }
+          })
+        })
+      } else {
+        console.log("Error generating fiche d'inscription, sending email without it")
+        sendEmailMember(id, [])
+      }
+    })
   } catch (e) {
     console.log(e)
     console.log("Error generating fiche d'inscription, sending email without it")
@@ -351,7 +347,7 @@ const addSignature = (id) => {
   const pdfFiller = new PDFFiller(originalPDF, newPDF)
   pdfFiller.addSignature(signature, { x: 465, y: 730 }, 40)
   pdfFiller.writeChanges()
-  const filename = 'fiche_inscription.pdf';
+  const filename = `fiche_inscription_membre_actif_${id}.pdf`;
   const filesize = fs.statSync(newPDF).size;
   const content = fs.readFileSync(newPDF);
   const attachments = [{ filename, filesize, content }]
@@ -370,6 +366,7 @@ const testFunction = () => {
   //   }
   // })
   //makeFicheInscription(33)
+  prepareEmailMember(38)
 }
 
 /* Server */

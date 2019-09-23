@@ -217,7 +217,7 @@ const Inscription = (props: interfaces.InscriptionProps) => {
 
   const departmentId = (
     <Form.Group controlId="departmentId">
-      <Form.Label className="required">Departement</Form.Label>
+      <Form.Label className="required">Département</Form.Label>
       <Form.Control
         className="departmentId"
         as="select"
