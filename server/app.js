@@ -305,33 +305,24 @@ const sendEmailConsultant = async (data) => {
   emailSender.sendEmail(mailOptions);
 }
 
-const makeFicheInscription = (id) => {
-  const url = process.env.API_HOST + `/api/v1/sg/membre-inscription/${id}/document/1/generate`
+const makeFicheInscription = async (id) => {
+  const url = process.env.API_HOST + `/api/v1/sg/membre-inscription/${id}/document/1/generate`;
   try {
-    fetch(url, { headers: { Authorization: api_token } }).then((res) => {
-      if (res.ok) {
-        res.json().then((data) => {
-          const file = fs.createWriteStream(__dirname + `/storage/fiches_inscription/${id}.pdf`);
-          fetch(data.location).then((response) => {
-            if (response.ok) {
-              response.body.pipe(file);
-              res.body.on("error", (err) => {
-                console.log(err)
-              });
-              file.on('finish', function () {
-                file.close(() => { addSignature(id) });
-              });
-            } else {
-              console.log("Error fetching fiche d'inscription, sending email without it")
-              sendEmailMember(id, [])
-            }
-          })
-        })
-      } else {
-        console.log("Error generating fiche d'inscription, sending email without it")
-        sendEmailMember(id, [])
-      }
-    })
+    const res = await fetch(url, { headers: { Authorization: api_token } });
+    if (!res.ok) throw Error("Keros failed to generate fiche d'inscription");
+
+    const data = await res.json();
+    const fileResponse = await fetch(data.location);
+
+    if (!fileResponse.ok) throw Error("Error downloading fiche d'inscription");
+
+    const filePath = __dirname + `/storage/fiches_inscription/${id}.pdf`;
+    const file = fs.createWriteStream(filePath);
+    fileResponse.body.pipe(file);
+    fileResponse.body.on("error", (err) => {throw Error("Error saving fiche d'inscription")});
+    file.on('finish', () => {
+      file.close(() => { addSignature(id,filePath) });
+    });
   } catch (e) {
     console.log(e)
     console.log("Error generating fiche d'inscription, sending email without it")
@@ -340,8 +331,7 @@ const makeFicheInscription = (id) => {
 
 }
 
-const addSignature = (id) => {
-  const originalPDF = __dirname + `/storage/fiches_inscription/${id}.pdf`
+const addSignature = (id, originalPDF) => {
   const newPDF = __dirname + `/storage/fiches_inscription_signed/${id}.pdf`
   const signature = __dirname + `/storage/signatures/${id}.png`
   const pdfFiller = new PDFFiller(originalPDF, newPDF)
@@ -355,17 +345,6 @@ const addSignature = (id) => {
 }
 
 const testFunction = () => {
-  // const url = `${process.env.API_HOST}/api/v1/sg/consultant-inscription/${9}`
-  // fetch(url, {
-  //   headers: { Authorization: api_token }
-  // }).then((res) => {
-  //   if (res.ok) {
-  //     res.json().then(data => {
-  //       sendEmailConsultant(data)
-  //     })
-  //   }
-  // })
-  //makeFicheInscription(33)
   prepareEmailMember(38)
 }
 
