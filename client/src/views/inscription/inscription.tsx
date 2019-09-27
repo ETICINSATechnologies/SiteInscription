@@ -394,12 +394,12 @@ const Inscription = (props: interfaces.InscriptionProps) => {
 
   const documentResidencePermit = (
     <Form.Group controlId="documentResidencePermit">
-      <Form.Label>
+      <Form.Label className={Number(inscriptionState.person.nationalityId)===62 ? '': 'required'}>
         Titre de séjour valide (si étudiant étranger)
       <br />
         <button className='btn-like-link' onClick={handleToggleModal}>Clique-ici pour plus d'information</button>
       </Form.Label>
-      <Form.Control className='documentResidencePermit' onChange={handleChangeFile as any} type="file" accept={helpers.acceptedExtensions}/>
+      <Form.Control className='documentResidencePermit' onChange={handleChangeFile as any} type="file" accept={helpers.acceptedExtensions} required={Number(inscriptionState.person.nationalityId)!==62}/>
     </Form.Group>
   )
 

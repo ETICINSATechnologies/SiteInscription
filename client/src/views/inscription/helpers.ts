@@ -32,27 +32,25 @@ export const handleSubmit = (event: React.FormEvent, person: PersonInterface, is
     event.preventDefault();
     if (person.calculateTotalFilesize(person) > maxTotalSize) {
         alert('Les fichiers sont trop gros, la taille maximale pour tout les fichiers est 50Mo');
+    } else if (!person.verifyDocumentResidencePermit(person)) {
+        alert("Les étrangers doivent obligatoirement télécharger leur titre de séjour")
     } else {
         let form_data: FormData = person.getFormData(person);
         setIsUploading(true)
         try {
             if (isConsultant) {
-                if (!person.verifyDocumentResidencePermit()) {
-                    alert("Les étrangers doivent obligatoirement télécharger leur titre de séjour")
-                } else {
-                    fetch('api/consultant-inscription', {
-                        method: 'POST',
-                        body: form_data
-                    })
-                        .then(res => {
-                            setIsUploading(false)
-                            if (res.ok) {
-                                window.location.href = '/landing-consultant'
-                            } else {
-                                alert(errorMessage);
-                            }
-                        });
-                }
+                fetch('api/consultant-inscription', {
+                    method: 'POST',
+                    body: form_data
+                })
+                    .then(res => {
+                        setIsUploading(false)
+                        if (res.ok) {
+                            window.location.href = '/landing-consultant'
+                        } else {
+                            alert(errorMessage);
+                        }
+                    });
             } else {
                 const signature_form_data = person.getSignatureFormData(person)
                 fetch('api/membre-inscription', {

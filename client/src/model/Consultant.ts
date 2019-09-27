@@ -128,7 +128,7 @@ export class Consultant implements ConsultantInterface {
     }
 
     verifyDocumentResidencePermit = (consultantInterface : ConsultantInterface) => {
-        return consultantInterface.nationalityId===62 || consultantInterface.documentResidencePermit;
+        return Number(consultantInterface.nationalityId)===62 || consultantInterface.documentResidencePermit;
     }
 }
 
