@@ -99,6 +99,10 @@ export class Member implements MemberInterface {
         return totalSize;
     }
 
+    verifyDocumentResidencePermit = (consultantInterface : MemberInterface) => {
+        return true;
+    }
+
 }
 
 export let defaultMember = new Member({

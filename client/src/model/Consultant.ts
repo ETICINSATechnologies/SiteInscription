@@ -126,6 +126,10 @@ export class Consultant implements ConsultantInterface {
         }
         return totalSize;
     }
+
+    verifyDocumentResidencePermit = (consultantInterface : ConsultantInterface) => {
+        return consultantInterface.nationalityId===62 || consultantInterface.documentResidencePermit;
+    }
 }
 
 export let defaultConsultant = new Consultant({

@@ -37,18 +37,22 @@ export const handleSubmit = (event: React.FormEvent, person: PersonInterface, is
         setIsUploading(true)
         try {
             if (isConsultant) {
-                fetch('api/consultant-inscription', {
-                    method: 'POST',
-                    body: form_data
-                })
-                    .then(res => {
-                        setIsUploading(false)
-                        if (res.ok) {
-                            window.location.href = '/landing-consultant'
-                        } else {
-                            alert(errorMessage);
-                        }
-                    });
+                if (!person.verifyDocumentResidencePermit()) {
+                    alert("Les étrangers doivent obligatoirement télécharger leur titre de séjour")
+                } else {
+                    fetch('api/consultant-inscription', {
+                        method: 'POST',
+                        body: form_data
+                    })
+                        .then(res => {
+                            setIsUploading(false)
+                            if (res.ok) {
+                                window.location.href = '/landing-consultant'
+                            } else {
+                                alert(errorMessage);
+                            }
+                        });
+                }
             } else {
                 const signature_form_data = person.getSignatureFormData(person)
                 fetch('api/membre-inscription', {
