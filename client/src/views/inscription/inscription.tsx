@@ -399,7 +399,7 @@ const Inscription = (props: interfaces.InscriptionProps) => {
       <br />
         <button className='btn-like-link' onClick={handleToggleModal}>Clique-ici pour plus d'information</button>
       </Form.Label>
-      <Form.Control className='documentResidencePermit' onChange={handleChangeFile as any} type="file" accept={helpers.acceptedExtensions} required={inscriptionState.person.nationalityId!==62}/>
+      <Form.Control className='documentResidencePermit' onChange={handleChangeFile as any} type="file" accept={helpers.acceptedExtensions}/>
     </Form.Group>
   )
 

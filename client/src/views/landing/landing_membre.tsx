@@ -1,5 +1,5 @@
 import React from "react";
-import { Card, Nav } from "react-bootstrap";
+import { Card } from "react-bootstrap";
 import Logo from '../../resources/logo_etic_flashy.gif';
 
 const Landing_Membre = () => {
