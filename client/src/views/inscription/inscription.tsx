@@ -399,7 +399,7 @@ const Inscription = (props: interfaces.InscriptionProps) => {
       <br />
         <button className='btn-like-link' onClick={handleToggleModal}>Clique-ici pour plus d'information</button>
       </Form.Label>
-      <Form.Control className='documentResidencePermit' onChange={handleChangeFile as any} type="file" accept={helpers.acceptedExtensions} />
+      <Form.Control className='documentResidencePermit' onChange={handleChangeFile as any} type="file" accept={helpers.acceptedExtensions} required={inscriptionState.person.nationalityId!==62}/>
     </Form.Group>
   )
 
@@ -467,7 +467,7 @@ const Inscription = (props: interfaces.InscriptionProps) => {
         {
           props.isConsultant ? null :
             <div className='has-margin-top'>
-              <p className="important">Une cotisation de 4 euros est demandée à chaque nouvel adhérent pour finaliser son inscription. Cette cotisation permet de contribuer à la vie quotidienne de l’association.</p>
+              <p>Une cotisation de 4 euros est demandée à chaque nouvel adhérent pour finaliser son inscription. Cette cotisation permet de contribuer à la vie quotidienne de l’association.</p>
             </div>
         }
         <div className="text-center">
