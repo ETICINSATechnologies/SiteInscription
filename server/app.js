@@ -80,10 +80,12 @@ app.post('/api/membre-inscription/:id/signature', (req, res) => {
 
 app.use('/api/membre-inscription', proxy(process.env.API_HOST, {
   proxyReqOptDecorator: function (proxyReqOpts) {
+    console.log("Adding authorization header to member inscription");
     proxyReqOpts.headers['Authorization'] = api_token;
     return proxyReqOpts;
   },
   proxyReqPathResolver: function () {
+    console.log("Forwarding consultant inscription");
     return '/api/v1/sg/membre-inscription';
   },
   limit: '50mb'
@@ -91,19 +93,24 @@ app.use('/api/membre-inscription', proxy(process.env.API_HOST, {
 
 app.use('/api/consultant-inscription', proxy(process.env.API_HOST, {
   proxyReqOptDecorator: function (proxyReqOpts) {
+    console.log("Adding authorization header to consultant inscription");
     proxyReqOpts.headers['Authorization'] = api_token;
     return proxyReqOpts;
   },
   proxyReqPathResolver: function () {
+    console.log("Forwarding consultant inscription");
     return '/api/v1/sg/consultant-inscription';
   },
   userResDecorator: function (proxyRes, proxyResData, userReq, userRes) {
     if (proxyRes.statusCode === 201) {
+      console.log("Successfully created consultant inscription");
       const dataString = proxyResData.toString('utf8');
       const data = JSON.parse(dataString);
       setTimeout(() => {
         sendEmailConsultant(data)
       }, 3000)
+    } else {
+      console.log("Error creating consultant inscription (check keros)");
     }
     return proxyResData;
   },
