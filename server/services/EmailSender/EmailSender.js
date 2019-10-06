@@ -45,12 +45,13 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-Object.defineProperty(exports, "__esModule", { value: true });
+exports.__esModule = true;
 var nodemailer = require('nodemailer');
 var EmailSender = /** @class */ (function () {
-    function EmailSender(service, auth) {
+    function EmailSender(service, auth, logger) {
         this.service = service;
         this.auth = auth;
+        this.logger = logger;
     }
     EmailSender.prototype.createTransporter = function (service, auth) {
         var transporter = nodemailer.createTransport({
@@ -60,6 +61,7 @@ var EmailSender = /** @class */ (function () {
         return transporter;
     };
     EmailSender.prototype.splitAttachments = function (mailOptions) {
+        var _this = this;
         var retMailOptions = [];
         var currentIndex = 0;
         var singleEmailLimit = 20 * 1024 * 1024;
@@ -72,7 +74,7 @@ var EmailSender = /** @class */ (function () {
             originalAttachments.forEach(function (attachment) {
                 currentSize_1 += attachment.filesize;
                 if (currentSize_1 >= currentLimit) {
-                    console.log('Attachments too large, making new email');
+                    _this.logger.info("Attachments too large, making new email");
                     currentSize_1 = currentLimit + attachment.filesize;
                     ++currentIndex;
                     currentLimit += singleEmailLimit;
@@ -90,17 +92,17 @@ var EmailSender = /** @class */ (function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        console.log('Preparing to send new email');
-                        console.log('Creating transporter');
+                        this.logger.info("Preparing to send new email");
+                        this.logger.info("Creating transporter");
                         transporter = undefined;
                         try {
                             transporter = this.createTransporter(this.service, this.auth);
                         }
                         catch (e) {
-                            console.log('Error creating transporter');
+                            this.logger.error("Error creating transporter");
                         }
                         if (!transporter) return [3 /*break*/, 7];
-                        console.log('Transporter created, sending email');
+                        this.logger.info("Transporter created, sending email");
                         mailOptionArray = this.splitAttachments(mailOptions);
                         _i = 0, mailOptionArray_1 = mailOptionArray;
                         _a.label = 1;
@@ -113,11 +115,13 @@ var EmailSender = /** @class */ (function () {
                         return [4 /*yield*/, transporter.sendMail(mailOptions_1)];
                     case 3:
                         info = _a.sent();
-                        console.log('Email sent successfully ', info.response);
+                        this.logger.info("Email sent successfully");
+                        this.logger.info(info.response);
                         return [3 /*break*/, 5];
                     case 4:
                         e_1 = _a.sent();
-                        console.log('Error occurred while sending email ', e_1.message);
+                        this.logger.error("Error occurred while sending email");
+                        this.logger.error(e_1.message);
                         return [3 /*break*/, 5];
                     case 5:
                         _i++;

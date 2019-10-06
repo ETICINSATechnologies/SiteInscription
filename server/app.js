@@ -13,6 +13,7 @@ const stripe = require("stripe")(process.env.STRIPE_SK);
 const proxy = require('express-http-proxy');
 const rp = require('request-promise-native');
 const formidable = require('formidable');
+const { createLogger, format, transports } = require('winston');
 
 
 require('dotenv').config();
@@ -37,6 +38,28 @@ const email_auth = {
 
 const email_sg = process.env.EMAIL_SG;
 
+/* Logger */
+const logger = createLogger({
+  level: 'info',
+  format: format.combine(
+    format.timestamp({
+      format: 'YYYY-MM-DD HH:mm:ss'
+    }),
+    format.errors({ stack: true }),
+    format.splat(),
+    format.json()
+  ),
+  defaultMeta: { service: 'user-service' },
+  transports: [
+    //
+    // - Write to all logs with level `info` and below to `combined.log`.
+    // - Write all logs error (and below) to `error.log`.
+    //
+    new transports.File({ filename: 'error.log', level: 'error' }),
+    new transports.File({ filename: 'combined.log' })
+  ]
+});
+
 /* Static File Declaration */
 
 app.use(express.static(path.join(__dirname, '../client/build')));
@@ -58,19 +81,20 @@ app.get('/api/meta', (req, res) => {
 })
 
 app.post('/api/membre-inscription/:id/signature', (req, res) => {
-  console.log(`Received signature from ${req.params.id}`)
+  logger.info(`Received signature from ${req.params.id}`)
   new formidable.IncomingForm().parse(req)
     .on('fileBegin', (name, file) => {
       file.path = __dirname + `/storage/signatures/${req.params.id}.png`
     })
     .on('file', (name, file) => {
-      console.log('Uploaded file', name)
+      logger.info(`Uploaded ${filename}`)
     })
     .on('aborted', () => {
-      console.error('Request aborted by the user')
+      logger.error(`Request aborted by the user`)
     })
     .on('error', (err) => {
-      console.error('Error uploading signature', err)
+      logger.error(`Request aborted by the user`)
+      logger.error(err)
       throw err
     })
     .on('end', () => {
@@ -80,12 +104,12 @@ app.post('/api/membre-inscription/:id/signature', (req, res) => {
 
 app.use('/api/membre-inscription', proxy(process.env.API_HOST, {
   proxyReqOptDecorator: function (proxyReqOpts) {
-    console.log("Adding authorization header to member inscription");
+    logger.info(`Adding authorization header to member inscription`);
     proxyReqOpts.headers['Authorization'] = api_token;
     return proxyReqOpts;
   },
   proxyReqPathResolver: function () {
-    console.log("Forwarding consultant inscription");
+    logger.info(`Forwarding consultant inscription`);
     return '/api/v1/sg/membre-inscription';
   },
   limit: '50mb'
@@ -93,24 +117,24 @@ app.use('/api/membre-inscription', proxy(process.env.API_HOST, {
 
 app.use('/api/consultant-inscription', proxy(process.env.API_HOST, {
   proxyReqOptDecorator: function (proxyReqOpts) {
-    console.log("Adding authorization header to consultant inscription");
+    logger.info(`Adding authorization header to consultant inscription`);
     proxyReqOpts.headers['Authorization'] = api_token;
     return proxyReqOpts;
   },
   proxyReqPathResolver: function () {
-    console.log("Forwarding consultant inscription");
+    logger.info(`Forwarding consultant inscription`);
     return '/api/v1/sg/consultant-inscription';
   },
   userResDecorator: function (proxyRes, proxyResData, userReq, userRes) {
     if (proxyRes.statusCode === 201) {
-      console.log("Successfully created consultant inscription");
+      logger.info(`Successfully created consultant inscription`);
       const dataString = proxyResData.toString('utf8');
       const data = JSON.parse(dataString);
       setTimeout(() => {
         sendEmailConsultant(data)
       }, 3000)
     } else {
-      console.log("Error creating consultant inscription (check keros)");
+      logger.error(`Error creating consultant inscription (check keros)`);
     }
     return proxyResData;
   },
@@ -149,6 +173,12 @@ if (process.env.NODE_ENV === 'production') {
   app.get('/*', (req, res) => {
     res.sendFile(path.join(__dirname, '../client/public/index.html'));
   })
+  logger.add(new transports.Console({
+    format: format.combine(
+      format.colorize(),
+      format.simple()
+    )
+  }));
 }
 
 /* Services */
@@ -158,7 +188,7 @@ const loginKeros = async (callback) => {
   const user = { username: process.env.API_USER, password: process.env.API_PASSWORD };
 
   const relogin = () => {
-    console.log('Failed to login to keros, trying again in 30s');
+    logger.error(`Failed to login to keros, trying again in 30s`);
     setTimeout(() => { loginKeros(callback) }, 30000);
   }
 
@@ -172,14 +202,11 @@ const loginKeros = async (callback) => {
     })
     .then((res) => {
       if (res.ok) {
-        console.log("Logged into keros");
+        logger.info(`Logged into keros`);
         res.json()
           .then((result) => {
             api_token = result.token;
             if (callback) callback();
-          })
-          .catch(() => {
-
           })
       } else {
         relogin();
@@ -192,7 +219,7 @@ const loginKeros = async (callback) => {
 }
 
 const refreshMeta = async () => {
-  console.log('Getting keros meta data');
+  logger.info(`Getting keros meta data`);
   for (const key in keros_meta) {
     keros_meta[key] = await getMeta(key);
   }
@@ -207,8 +234,8 @@ const getMeta = async (info) => {
 }
 
 const handleCheckoutSession = (session) => {
-  console.log('Receiving checkout session');
-  console.log('Stripe checkout session received from ' + session.client_reference_id);
+  logger.info(`Receiving checkout session`);
+  logger.info(`Stripe checkout session received from ${session.client_reference_id}`);
   try {
     fetch((process.env.API_HOST + '/api/v1/sg/membre-inscription/' + session.client_reference_id + '/confirm-payment'), {
       method: 'POST',
@@ -222,7 +249,7 @@ const handleCheckoutSession = (session) => {
       }
     })
   } catch (e) {
-    console.log('Error confirming payment')
+    logger.error(`Error confirming payment`);
   }
 }
 
@@ -247,7 +274,7 @@ const sendEmailMember = (id, attachments) => {
                 html: html,
                 attachments: attachments
               }
-              const emailSender = new EmailSender(process.env.EMAIL_PROVIDER, email_auth);
+              const emailSender = new EmailSender(process.env.EMAIL_PROVIDER, email_auth, logger);
               emailSender.sendEmail(mailOptions);
             })
         }
@@ -284,7 +311,8 @@ const sendEmailConsultant = async (data) => {
           const contentLength = response.headers['content-length']
           if (contentLength) filesize = Number(contentLength);
         } catch (e) {
-          console.log('Error getting filename', e.message)
+          logger.error(`Error getting filename`);
+          logger.error(e.message);
         }
         attachments.push({
           filename: filename,
@@ -296,7 +324,7 @@ const sendEmailConsultant = async (data) => {
     try {
       await rp(options, callback);
     } catch (e) {
-      console.log('Warning : Error getting a file')
+      logger.info(`Warning : Error getting a file`);
     }
 
   }
@@ -308,7 +336,7 @@ const sendEmailConsultant = async (data) => {
     html: html,
     attachments: attachments
   }
-  const emailSender = new EmailSender(process.env.EMAIL_PROVIDER, email_auth);
+  const emailSender = new EmailSender(process.env.EMAIL_PROVIDER, email_auth, logger);
   emailSender.sendEmail(mailOptions);
 }
 
@@ -326,13 +354,13 @@ const makeFicheInscription = async (id) => {
     const filePath = __dirname + `/storage/fiches_inscription/${id}.pdf`;
     const file = fs.createWriteStream(filePath);
     fileResponse.body.pipe(file);
-    fileResponse.body.on("error", (err) => {throw Error("Error saving fiche d'inscription")});
+    fileResponse.body.on("error", (err) => { throw Error("Error saving fiche d'inscription") });
     file.on('finish', () => {
-      file.close(() => { addSignature(id,filePath) });
+      file.close(() => { addSignature(id, filePath) });
     });
   } catch (e) {
-    console.log(e)
-    console.log("Error generating fiche d'inscription, sending email without it")
+    logger.error(e);
+    logger.error(`Error generating fiche d'inscription, sending email without it`);
     sendEmailMember(id, [])
   }
 
@@ -358,10 +386,11 @@ const testFunction = () => {
 /* Server */
 
 app.listen(port, (req, res) => {
+  logger.info(`Server listening on port: ${port}`);
   console.log(`Server listening on port: ${port}`);
   loginKeros(refreshMeta);
   setInterval(() => {
     loginKeros(refreshMeta);
   }, refreshInterval);
-  //setTimeout(testFunction, 200);
+  setTimeout(testFunction, 200);
 })

@@ -25,10 +25,12 @@ export class EmailSender {
 
   service: string;
   auth: Auth;
+  logger: any;
 
-  constructor(service: string, auth: Auth) {
+  constructor(service: string, auth: Auth, logger: any) {
     this.service = service;
     this.auth = auth;
+    this.logger = logger;
   }
 
   protected createTransporter(service: string, auth: Auth) {
@@ -57,7 +59,7 @@ export class EmailSender {
         currentSize += attachment.filesize;
 
         if (currentSize >= currentLimit) {
-          console.log('Attachments too large, making new email');
+          this.logger.info(`Attachments too large, making new email`);
           currentSize = currentLimit + attachment.filesize;
           ++currentIndex;
           currentLimit += singleEmailLimit;
@@ -78,25 +80,27 @@ export class EmailSender {
   }
 
   public async sendEmail(mailOptions: MailOptions) {
-    console.log('Preparing to send new email');
-    console.log('Creating transporter');
+    this.logger.info(`Preparing to send new email`);
+    this.logger.info(`Creating transporter`);
     let transporter: any | undefined = undefined;
     try {
       transporter = this.createTransporter(this.service, this.auth);
     } catch (e) {
-      console.log('Error creating transporter');
+      this.logger.error(`Error creating transporter`);
     }
     if (transporter) {
-      console.log('Transporter created, sending email');
+      this.logger.info(`Transporter created, sending email`);
 
       const mailOptionArray = this.splitAttachments(mailOptions)
 
       for (const mailOptions of mailOptionArray) {
         try {
           let info = await transporter.sendMail(mailOptions);
-          console.log('Email sent successfully ', info.response);
+          this.logger.info(`Email sent successfully`);
+          this.logger.info(info.response);
         } catch (e) {
-          console.log('Error occurred while sending email ', e.message);
+          this.logger.error(`Error occurred while sending email`);
+          this.logger.error(e.message);
         }
       }
 
