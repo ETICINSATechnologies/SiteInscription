@@ -10,6 +10,9 @@ prod-down:
 prod-logs:
 	docker-compose -f docker-compose-prod.yml logs -f
 
+exec:
+	docker-compose -f docker-compose-prod.yml exec app sh
+
 check:
 	./provisioning/check_environment.sh
 	
