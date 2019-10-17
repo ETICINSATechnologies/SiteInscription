@@ -26,7 +26,7 @@ export const initiateMetaInfo = () => {
     )
 }
 
-const errorMessage = "Il y a eu une erreur lors de l'inscription, vérifie que les informations sont au bon format. Si le problème persiste, contacte l'administrateur à responsable.dsi@etic-insa.com"
+const errorMessage = "Il y a eu une erreur lors de l'inscription, vérifie que les informations sont au bon format. Si le problème persiste, contacte l'administrateur à sadsitha.lokuge@etic-insa.com ou par facebook (Sadsitha Lokuge)"
 
 export const handleSubmit = (event: React.FormEvent, person: PersonInterface, isConsultant: boolean, setIsUploading: React.Dispatch<React.SetStateAction<boolean>>) => {
     event.preventDefault();
