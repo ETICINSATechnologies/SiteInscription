@@ -392,5 +392,5 @@ app.listen(port, (req, res) => {
   setInterval(() => {
     loginKeros(refreshMeta);
   }, refreshInterval);
-  setTimeout(testFunction, 200);
+  //setTimeout(testFunction, 200);
 })
