@@ -87,7 +87,7 @@ app.post('/api/membre-inscription/:id/signature', (req, res) => {
       file.path = __dirname + `/storage/signatures/${req.params.id}.png`
     })
     .on('file', (name, file) => {
-      logger.info(`Uploaded ${filename}`)
+      logger.info(`Uploaded ${name}`)
     })
     .on('aborted', () => {
       logger.error(`Request aborted by the user`)
