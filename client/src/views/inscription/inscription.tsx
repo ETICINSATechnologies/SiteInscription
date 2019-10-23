@@ -180,6 +180,8 @@ const Inscription = (props: interfaces.InscriptionProps) => {
       <Form.Control
         className="birthday"
         type="date"
+        min="1900-01-01"
+        max="2019-01-01"
         required
         onChange={handleChangeInput as any}
       >

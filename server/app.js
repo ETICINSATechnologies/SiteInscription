@@ -235,22 +235,30 @@ const getMeta = async (info) => {
 
 const handleCheckoutSession = (session) => {
   logger.info(`Receiving checkout session`);
-  logger.info(`Stripe checkout session received from ${session.client_reference_id}`);
-  try {
-    fetch((process.env.API_HOST + '/api/v1/sg/membre-inscription/' + session.client_reference_id + '/confirm-payment'), {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: api_token
+  //check sku refers to member inscription
+  if (session.display_items && session.display_items.length && session.display_items[0].sku) {
+    if (session.display_items[0].sku.id === process.env.REACT_APP_STRIPE_PRODUCT) {
+      logger.info(`Stripe inscription checkout session received from ${session.client_reference_id}`);
+      try {
+        fetch((process.env.API_HOST + '/api/v1/sg/membre-inscription/' + session.client_reference_id + '/confirm-payment'), {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: api_token
+          }
+        }).then((res) => {
+          if (res.ok) {
+            prepareEmailMember(session.client_reference_id)
+          }
+        })
+      } catch (e) {
+        logger.error(`Error confirming payment`);
       }
-    }).then((res) => {
-      if (res.ok) {
-        prepareEmailMember(session.client_reference_id)
-      }
-    })
-  } catch (e) {
-    logger.error(`Error confirming payment`);
+    } else {
+      logger.info(`Stripe checkout session received for non-inscription product ${session.display_items[0].sku.id}`);
+    }
   }
+
 }
 
 const prepareEmailMember = (id) => {
