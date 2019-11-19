@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import moment from "moment";
 import Signature from "../../components/Signature/Signature";
 import CustomModal from "../../components/Modal/Modal";
 import "./inscription.css";
@@ -54,6 +55,24 @@ const Inscription = (props: interfaces.InscriptionProps) => {
           [property]: value
         }
       });
+    }
+  }
+
+  const handleChangeInputDate = (event: React.ChangeEvent) => {
+    event.persist();
+    let property: string = event.target.id;
+    if (inscriptionState.person.hasOwnProperty(property)) {
+      let value = (event.target as HTMLFormElement).value;
+      let momentDate = moment(value, "DD/MM/YYYY");
+      if (momentDate.isValid()) {
+        setInscriptionState({
+          ...inscriptionState,
+          person: {
+            ...inscriptionState.person,
+            [property]: momentDate.format("YYYY-MM-DD")
+          }
+        });
+      }
     }
   }
 
@@ -176,14 +195,14 @@ const Inscription = (props: interfaces.InscriptionProps) => {
 
   const birthday = (
     <Form.Group controlId="birthday">
-      <Form.Label className="required">Date de naissance</Form.Label>
+      <Form.Label className="required">Date de naissance (jj/mm/aaaa)</Form.Label>
       <Form.Control
         className="birthday"
-        type="date"
-        min="1900-01-01"
-        max="2019-01-01"
+        type="text"
+        placeholder="jj/mm/aaaa"
+        pattern="^([0-2][0-9]|(3)[0-1])(\/)(((0)[0-9])|((1)[0-2]))(\/)\d{4}$"
         required
-        onChange={handleChangeInput as any}
+        onChange={handleChangeInputDate as any}
       >
       </Form.Control>
     </Form.Group>
@@ -396,12 +415,12 @@ const Inscription = (props: interfaces.InscriptionProps) => {
 
   const documentResidencePermit = (
     <Form.Group controlId="documentResidencePermit">
-      <Form.Label className={Number(inscriptionState.person.nationalityId)===62 ? '': 'required'}>
+      <Form.Label className={Number(inscriptionState.person.nationalityId) === 62 ? '' : 'required'}>
         Titre de séjour valide (si étudiant étranger)
       <br />
         <button className='btn-like-link' onClick={handleToggleModal}>Clique-ici pour plus d'information</button>
       </Form.Label>
-      <Form.Control className='documentResidencePermit' onChange={handleChangeFile as any} type="file" accept={helpers.acceptedExtensions} required={Number(inscriptionState.person.nationalityId)!==62}/>
+      <Form.Control className='documentResidencePermit' onChange={handleChangeFile as any} type="file" accept={helpers.acceptedExtensions} required={Number(inscriptionState.person.nationalityId) !== 62} />
     </Form.Group>
   )
 

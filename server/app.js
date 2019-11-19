@@ -55,10 +55,11 @@ const logger = createLogger({
     // - Write to all logs with level `info` and below to `combined.log`.
     // - Write all logs error (and below) to `error.log`.
     //
-    new transports.File({ filename: 'error.log', level: 'error' }),
-    new transports.File({ filename: 'combined.log' })
+    new transports.File({ filename: path.join(__dirname,'../logs/error.log'), level: 'error' }),
+    new transports.File({ filename: path.join(__dirname,'../logs/combined.log') })
   ]
 });
+
 
 /* Static File Declaration */
 
@@ -109,7 +110,7 @@ app.use('/api/membre-inscription', proxy(process.env.API_HOST, {
     return proxyReqOpts;
   },
   proxyReqPathResolver: function () {
-    logger.info(`Forwarding consultant inscription`);
+    logger.info(`Forwarding member inscription`);
     return '/api/v1/sg/membre-inscription';
   },
   limit: '50mb'
@@ -185,6 +186,7 @@ if (process.env.NODE_ENV === 'production') {
 
 const loginKeros = async (callback) => {
   const loginpath = process.env.API_HOST + '/api/v1/auth/login';
+  logger.info(`Logging into keros at ${loginpath}`);
   const user = { username: process.env.API_USER, password: process.env.API_PASSWORD };
 
   const relogin = () => {
