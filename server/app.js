@@ -186,7 +186,6 @@ if (process.env.NODE_ENV === 'production') {
 
 const loginKeros = async (callback) => {
   const loginpath = process.env.API_HOST + '/api/v1/auth/login';
-  logger.info(`Logging into keros at ${loginpath}`);
   const user = { username: process.env.API_USER, password: process.env.API_PASSWORD };
 
   const relogin = () => {
