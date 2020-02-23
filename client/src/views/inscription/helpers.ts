@@ -5,6 +5,7 @@ import { defaultMember } from "../../model/Member";
 import { defaultConsultant } from "../../model/Consultant";
 import { Gender } from "../../model/Gender";
 import { Nationality } from "../../model/Nationality";
+import { Country } from "../../model/Country";
 
 export const initiateInscriptionState = (isConsultant: boolean) => {
     return (
@@ -21,9 +22,18 @@ export const initiateMetaInfo = () => {
             departments: [],
             poles: [],
             countries: [],
-            genders: []
+            genders: [],
+            countryMap: new Map<number, Country>(),
         } as interfaces.MetaInfo
     )
+}
+
+export const makeCountryMap = (countries: Country[]) => {
+    const countryMap = new Map<number, Country>();
+    countries.forEach(country => {
+        countryMap.set(country.id, country)
+    });
+    return countryMap;
 }
 
 const errorMessage = "Il y a eu une erreur lors de l'inscription, vérifie que les informations sont au bon format. Si le problème persiste, contacte l'administrateur à sadsitha.lokuge@etic-insa.com ou par facebook (Sadsitha Lokuge)"
@@ -181,3 +191,13 @@ export const checkFileExtension = (file: File | Blob | undefined) => {
 export const checkFile = (file: File | Blob | undefined) => {
     return (checkFileSize(file) && checkFileExtension(file))
 }
+
+export const isEU = (countryId: number, countryMap: Map<number, Country>): boolean => {
+    if (countryId) {
+        const country = countryMap.get(countryId);
+        if (country) {
+            return country.isEu;
+        }
+    }
+    return false;
+} 

@@ -18,7 +18,7 @@ export class Member implements MemberInterface {
     departmentId: number
     email: string
     phoneNumber?: string
-    outYear?: number
+    outYear: number
     nationalityId: number
     wantedPoleId: number
     line1: string
@@ -45,8 +45,8 @@ export class Member implements MemberInterface {
         this.countryId = memberInterface.countryId
         this.droitImage = memberInterface.droitImage
         this.signature = memberInterface.signature
+        this.outYear = memberInterface.outYear
         if (memberInterface.phoneNumber) this.phoneNumber = memberInterface.phoneNumber
-        if (memberInterface.outYear) this.outYear = memberInterface.outYear
         if (memberInterface.line2) this.line2 = memberInterface.line2
     }
 
@@ -62,6 +62,7 @@ export class Member implements MemberInterface {
             wantedPoleId: memberInterface.wantedPoleId,
             droitImage: memberInterface.droitImage,
             signature: memberInterface.signature,
+            outYear: memberInterface.outYear,
             'address[line1]': memberInterface.line1,
             'address[city]': memberInterface.city,
             'address[postalCode]': memberInterface.postalCode,
@@ -69,7 +70,6 @@ export class Member implements MemberInterface {
         } as MemberUpdate;
 
         if (memberInterface.phoneNumber) retMember.phoneNumber = memberInterface.phoneNumber
-        if (memberInterface.outYear) retMember.outYear = memberInterface.outYear
         if (memberInterface.line2) retMember['address[line2]'] = memberInterface.line2
 
         let form_data = new FormData()
@@ -118,4 +118,5 @@ export let defaultMember = new Member({
     countryId: 62,
     genderId: 3,
     droitImage: false,
+    outYear: new Date().getFullYear(),
 } as MemberInterface)

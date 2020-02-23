@@ -14,6 +14,7 @@ export interface MetaInfo {
     poles: Pole[];
     countries: Country[];
     genders: Gender[];
+    countryMap: Map<number,Country>;
 }
 
 export interface InscriptionProps {

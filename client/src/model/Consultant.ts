@@ -30,7 +30,7 @@ export class Consultant implements ConsultantInterface {
     departmentId: number
     email: string
     phoneNumber?: string
-    outYear?: number
+    outYear: number
     nationalityId: number
     line1: string
     line2?: string
@@ -63,13 +63,13 @@ export class Consultant implements ConsultantInterface {
         this.droitImage = consultantInterface.droitImage;
         this.isApprentice = consultantInterface.isApprentice;
         this.socialSecurityNumber = consultantInterface.socialSecurityNumber;
+        this.outYear = consultantInterface.outYear;
         this.documentIdentity = consultantInterface.documentIdentity;
         this.documentScolaryCertificate = consultantInterface.documentScolaryCertificate;
         this.documentRIB = consultantInterface.documentRIB;
         this.documentCVEC = consultantInterface.documentCVEC;
         this.documentVitaleCard = consultantInterface.documentVitaleCard;
         if (consultantInterface.phoneNumber) this.phoneNumber = consultantInterface.phoneNumber
-        if (consultantInterface.outYear) this.outYear = consultantInterface.outYear
         if (consultantInterface.documentResidencePermit) this.documentResidencePermit = consultantInterface.documentResidencePermit
         if (consultantInterface.line2) this.line2 = consultantInterface.line2
     }
@@ -86,6 +86,7 @@ export class Consultant implements ConsultantInterface {
             droitImage: consultantInterface.droitImage,
             isApprentice: consultantInterface.isApprentice,
             socialSecurityNumber: consultantInterface.socialSecurityNumber,
+            outYear: consultantInterface.outYear,
             documentIdentity: consultantInterface.documentIdentity,
             documentScolaryCertificate: consultantInterface.documentScolaryCertificate,
             documentRIB: consultantInterface.documentRIB,
@@ -98,7 +99,6 @@ export class Consultant implements ConsultantInterface {
         } as ConsultantUpdate;
 
         if (consultantInterface.phoneNumber) retConsultant.phoneNumber = consultantInterface.phoneNumber
-        if (consultantInterface.outYear) retConsultant.outYear = consultantInterface.outYear
         if (consultantInterface.line2) retConsultant['address[line2]'] = consultantInterface.line2
         if (consultantInterface.documentResidencePermit) retConsultant.documentResidencePermit = consultantInterface.documentResidencePermit
         let form_data = new FormData();
@@ -146,4 +146,5 @@ export let defaultConsultant = new Consultant({
     droitImage: false,
     isApprentice: false,
     socialSecurityNumber: '',
+    outYear: new Date().getFullYear(),
 } as ConsultantInterface);

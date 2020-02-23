@@ -39,6 +39,7 @@ const Inscription = (props: interfaces.InscriptionProps) => {
         departments: metaInfo.department ? metaInfo.department : [],
         countries: metaInfo.country ? metaInfo.country : [],
         genders: metaInfo.gender ? helpers.filterGenders(metaInfo.gender) : [],
+        countryMap: metaInfo.country ? helpers.makeCountryMap(metaInfo.country) : new Map()
       });
     }
   }
@@ -264,11 +265,12 @@ const Inscription = (props: interfaces.InscriptionProps) => {
 
   const outYear = (
     <Form.Group controlId="outYear">
-      <Form.Label>Année de sortie</Form.Label>
+      <Form.Label className="required">Année de sortie</Form.Label>
       <Form.Control
         className="outYear"
         as="select"
         onChange={handleChangeInput as any}
+        required
       >
         {renderYears()}
       </Form.Control>
@@ -415,12 +417,12 @@ const Inscription = (props: interfaces.InscriptionProps) => {
 
   const documentResidencePermit = (
     <Form.Group controlId="documentResidencePermit">
-      <Form.Label className={Number(inscriptionState.person.nationalityId) === 62 ? '' : 'required'}>
+      <Form.Label className={helpers.isEU(Number(inscriptionState.person.nationalityId), metaInfo.countryMap) ? '' : 'required'}>
         Titre de séjour valide (si étudiant étranger)
       <br />
         <button className='btn-like-link' onClick={handleToggleModal}>Clique-ici pour plus d'information</button>
       </Form.Label>
-      <Form.Control className='documentResidencePermit' onChange={handleChangeFile as any} type="file" accept={helpers.acceptedExtensions} required={Number(inscriptionState.person.nationalityId) !== 62} />
+      <Form.Control className='documentResidencePermit' onChange={handleChangeFile as any} type="file" accept={helpers.acceptedExtensions} required={!helpers.isEU(Number(inscriptionState.person.nationalityId), metaInfo.countryMap)} />
     </Form.Group>
   )
 

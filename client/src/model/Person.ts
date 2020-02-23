@@ -8,7 +8,7 @@ interface PersonGeneral {
     birthday: string
     email: string
     phoneNumber?: string
-    outYear?: number
+    outYear: number
     nationalityId: number
     droitImage: boolean
     [key: string]: any
