@@ -252,13 +252,14 @@ const Inscription = (props: interfaces.InscriptionProps) => {
 
   const phoneNumber = (
     <Form.Group controlId="phoneNumber">
-      <Form.Label>Téléphone portable</Form.Label>
+      <Form.Label className="required" >Téléphone portable</Form.Label>
       <Form.Control
         className="phoneNumber"
         type="tel"
         pattern="[0]{1}[0-9]{9}"
         placeholder="0669361420"
         onChange={handleChangeInput as any}
+        required
       />
     </Form.Group>
   )
@@ -382,7 +383,7 @@ const Inscription = (props: interfaces.InscriptionProps) => {
 
   const documentIdentity = (
     <Form.Group controlId="documentIdentity">
-      <Form.Label className="required">Pièce d'identité ou passeport</Form.Label>
+      <Form.Label className="required">Pièce d'identité ou passeport - recto-verso</Form.Label>
       <Form.Control className='documentIdentity' onChange={handleChangeFile as any} type="file" required accept={helpers.acceptedExtensions} />
     </Form.Group>
   )
@@ -396,7 +397,7 @@ const Inscription = (props: interfaces.InscriptionProps) => {
 
   const documentVitaleCard = (
     <Form.Group controlId="documentVitaleCard">
-      <Form.Label className="required">Carte Vitale</Form.Label>
+      <Form.Label className="required">Carte Vitale - recto-verso</Form.Label>
       <Form.Control className='documentVitaleCard' onChange={handleChangeFile as any} type="file" required accept={helpers.acceptedExtensions} />
     </Form.Group>
   )
@@ -418,7 +419,7 @@ const Inscription = (props: interfaces.InscriptionProps) => {
   const documentResidencePermit = (
     <Form.Group controlId="documentResidencePermit">
       <Form.Label className={helpers.isEU(Number(inscriptionState.person.nationalityId), metaInfo.countryMap) ? '' : 'required'}>
-        Titre de séjour valide (si étudiant étranger)
+        Titre de séjour valide (si étudiant étranger) - recto-verso
       <br />
         <button className='btn-like-link' onClick={handleToggleModal}>Clique-ici pour plus d'information</button>
       </Form.Label>

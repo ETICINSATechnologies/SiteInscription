@@ -7,7 +7,7 @@ interface PersonGeneral {
     genderId: number
     birthday: string
     email: string
-    phoneNumber?: string
+    phoneNumber: string
     outYear: number
     nationalityId: number
     droitImage: boolean

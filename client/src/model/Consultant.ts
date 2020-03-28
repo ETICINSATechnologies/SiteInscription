@@ -29,7 +29,7 @@ export class Consultant implements ConsultantInterface {
     birthday: string
     departmentId: number
     email: string
-    phoneNumber?: string
+    phoneNumber: string
     outYear: number
     nationalityId: number
     line1: string
@@ -69,7 +69,7 @@ export class Consultant implements ConsultantInterface {
         this.documentRIB = consultantInterface.documentRIB;
         this.documentCVEC = consultantInterface.documentCVEC;
         this.documentVitaleCard = consultantInterface.documentVitaleCard;
-        if (consultantInterface.phoneNumber) this.phoneNumber = consultantInterface.phoneNumber
+        this.phoneNumber = consultantInterface.phoneNumber
         if (consultantInterface.documentResidencePermit) this.documentResidencePermit = consultantInterface.documentResidencePermit
         if (consultantInterface.line2) this.line2 = consultantInterface.line2
     }
@@ -87,6 +87,7 @@ export class Consultant implements ConsultantInterface {
             isApprentice: consultantInterface.isApprentice,
             socialSecurityNumber: consultantInterface.socialSecurityNumber,
             outYear: consultantInterface.outYear,
+            phoneNumber: consultantInterface.phoneNumber,
             documentIdentity: consultantInterface.documentIdentity,
             documentScolaryCertificate: consultantInterface.documentScolaryCertificate,
             documentRIB: consultantInterface.documentRIB,
@@ -98,7 +99,6 @@ export class Consultant implements ConsultantInterface {
             'address[countryId]': consultantInterface.countryId,
         } as ConsultantUpdate;
 
-        if (consultantInterface.phoneNumber) retConsultant.phoneNumber = consultantInterface.phoneNumber
         if (consultantInterface.line2) retConsultant['address[line2]'] = consultantInterface.line2
         if (consultantInterface.documentResidencePermit) retConsultant.documentResidencePermit = consultantInterface.documentResidencePermit
         let form_data = new FormData();
@@ -143,6 +143,7 @@ export let defaultConsultant = new Consultant({
     postalCode: 0,
     countryId: 62,
     genderId: 3,
+    phoneNumber: '',
     droitImage: false,
     isApprentice: false,
     socialSecurityNumber: '',
