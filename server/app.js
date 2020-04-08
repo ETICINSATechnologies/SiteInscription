@@ -55,8 +55,8 @@ const logger = createLogger({
     // - Write to all logs with level `info` and below to `combined.log`.
     // - Write all logs error (and below) to `error.log`.
     //
-    new transports.File({ filename: path.join(__dirname,'../logs/error.log'), level: 'error' }),
-    new transports.File({ filename: path.join(__dirname,'../logs/combined.log') })
+    new transports.File({ filename: path.join(__dirname, '../logs/error.log'), level: 'error' }),
+    new transports.File({ filename: path.join(__dirname, '../logs/combined.log') })
   ]
 });
 
@@ -135,7 +135,13 @@ app.use('/api/consultant-inscription', proxy(process.env.API_HOST, {
         sendEmailConsultant(data)
       }, 3000)
     } else {
-      logger.error(`Error creating consultant inscription (check keros)`);
+      logger.error(`Error creating consultant inscription on keros with code : ${proxyRes.statusCode}`);
+      let error = `Unknown error`;
+      try {
+        const dataString = proxyResData.toString('utf8');
+        error = dataString;
+      } catch (error) { }
+      logger.error(error);
     }
     return proxyResData;
   },
@@ -292,62 +298,131 @@ const sendEmailMember = (id, attachments) => {
     console.log('Error sending member inscription email')
   }
 }
-
 const sendEmailConsultant = async (data) => {
   const id = data.id
-  //make html body
-  const html = makeHTML(data, true);
-  //make attachments
-  const documentList = ['documentIdentity', 'documentScolaryCertificate', 'documentRIB', 'documentVitaleCard', 'documentCVEC', 'documentResidencePermit']
-  const attachments = []
-  for (const documentName of documentList) {
-    const url = `${process.env.API_HOST}/api/v1/sg/consultant-inscription/${id}/document/${documentName}`;
-    const options = {
-      url: url,
-      headers: { Authorization: api_token },
-      encoding: null
-    };
-    const callback = (error, response, body) => {
-      if (!error && response.statusCode == 200) {
-        let filename = documentName;
-        let filesize = 0;
-        try {
-          const contentDispo = response.headers['content-disposition']
-          const startIndex = contentDispo.indexOf("filename=") + 10;
-          const endIndex = contentDispo.length - 1;
-          const headerFilename = contentDispo.substring(startIndex, endIndex);
-          if (headerFilename) filename += '.' + headerFilename.split('.')[1];
-          const contentLength = response.headers['content-length']
-          if (contentLength) filesize = Number(contentLength);
-        } catch (e) {
-          logger.error(`Error getting filename`);
-          logger.error(e.message);
-        }
-        attachments.push({
-          filename: filename,
-          content: body,
-          filesize: filesize
-        })
+  fetch((process.env.API_HOST + '/api/v1/sg/consultant-inscription/' + id + '/protected'), {
+    headers: { Authorization: api_token }
+  })
+    .then((res) => {
+      if (res.ok) {
+        res.json()
+          .then(async (consultant) => {
+            //make body
+            const html = makeHTML(consultant, true);
+            //make attachments
+            const documentList = ['documentIdentity', 'documentScolaryCertificate', 'documentRIB', 'documentVitaleCard', 'documentCVEC', 'documentResidencePermit']
+            const attachments = []
+            for (const documentName of documentList) {
+              const url = `${process.env.API_HOST}/api/v1/sg/consultant-inscription/${id}/document/${documentName}`;
+              const options = {
+                url: url,
+                headers: { Authorization: api_token },
+                encoding: null
+              };
+              const callback = (error, response, body) => {
+                if (!error && response.statusCode == 200) {
+                  let filename = documentName;
+                  let filesize = 0;
+                  try {
+                    const contentDispo = response.headers['content-disposition']
+                    const startIndex = contentDispo.indexOf("filename=") + 10;
+                    const endIndex = contentDispo.length - 1;
+                    const headerFilename = contentDispo.substring(startIndex, endIndex);
+                    if (headerFilename) filename += '.' + headerFilename.split('.')[1];
+                    const contentLength = response.headers['content-length']
+                    if (contentLength) filesize = Number(contentLength);
+                  } catch (e) {
+                    logger.error(`Error getting filename`);
+                    logger.error(e.message);
+                  }
+                  attachments.push({
+                    filename: filename,
+                    content: body,
+                    filesize: filesize
+                  })
+                }
+              }
+              try {
+                await rp(options, callback);
+              } catch (e) {
+                logger.info(`Warning : Error getting a file`);
+              }
+            }
+            //make email
+            const mailOptions = {
+              from: email_auth.user,
+              to: email_sg,
+              subject: `Nouvelle Inscription - Consultant (ID - ${id})`,
+              html: html,
+              attachments: attachments
+            }
+            const emailSender = new EmailSender(process.env.EMAIL_PROVIDER, email_auth, logger);
+            emailSender.sendEmail(mailOptions);
+          })
+      } else {
+        logger.error(`Error fetching consultant inscription from keros`);
       }
-    }
-    try {
-      await rp(options, callback);
-    } catch (e) {
-      logger.info(`Warning : Error getting a file`);
-    }
-
-  }
-  //make email
-  const mailOptions = {
-    from: email_auth.user,
-    to: email_sg,
-    subject: `Nouvelle Inscription - Consultant (ID - ${id})`,
-    html: html,
-    attachments: attachments
-  }
-  const emailSender = new EmailSender(process.env.EMAIL_PROVIDER, email_auth, logger);
-  emailSender.sendEmail(mailOptions);
+    })
+    .catch((e) => {
+      logger.error(`Error fetching consultant inscription from keros`);
+    })
 }
+
+// const sendEmailConsultant = async (data) => {
+//   const id = data.id
+//   //make html body
+//   const html = makeHTML(data, true);
+//   //make attachments
+//   const documentList = ['documentIdentity', 'documentScolaryCertificate', 'documentRIB', 'documentVitaleCard', 'documentCVEC', 'documentResidencePermit']
+//   const attachments = []
+//   for (const documentName of documentList) {
+//     const url = `${process.env.API_HOST}/api/v1/sg/consultant-inscription/${id}/document/${documentName}`;
+//     const options = {
+//       url: url,
+//       headers: { Authorization: api_token },
+//       encoding: null
+//     };
+//     const callback = (error, response, body) => {
+//       if (!error && response.statusCode == 200) {
+//         let filename = documentName;
+//         let filesize = 0;
+//         try {
+//           const contentDispo = response.headers['content-disposition']
+//           const startIndex = contentDispo.indexOf("filename=") + 10;
+//           const endIndex = contentDispo.length - 1;
+//           const headerFilename = contentDispo.substring(startIndex, endIndex);
+//           if (headerFilename) filename += '.' + headerFilename.split('.')[1];
+//           const contentLength = response.headers['content-length']
+//           if (contentLength) filesize = Number(contentLength);
+//         } catch (e) {
+//           logger.error(`Error getting filename`);
+//           logger.error(e.message);
+//         }
+//         attachments.push({
+//           filename: filename,
+//           content: body,
+//           filesize: filesize
+//         })
+//       }
+//     }
+//     try {
+//       await rp(options, callback);
+//     } catch (e) {
+//       logger.info(`Warning : Error getting a file`);
+//     }
+
+//   }
+//   //make email
+//   const mailOptions = {
+//     from: email_auth.user,
+//     to: email_sg,
+//     subject: `Nouvelle Inscription - Consultant (ID - ${id})`,
+//     html: html,
+//     attachments: attachments
+//   }
+//   const emailSender = new EmailSender(process.env.EMAIL_PROVIDER, email_auth, logger);
+//   emailSender.sendEmail(mailOptions);
+// }
 
 const makeFicheInscription = async (id) => {
   const url = process.env.API_HOST + `/api/v1/sg/membre-inscription/${id}/document/1/generate`;
