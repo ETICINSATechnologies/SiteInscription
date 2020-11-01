@@ -13,6 +13,7 @@ const stripe = require("stripe")(process.env.STRIPE_SK);
 const proxy = require('express-http-proxy');
 const rp = require('request-promise-native');
 const formidable = require('formidable');
+const FormData = require('form-data');
 const { createLogger, format, transports } = require('winston');
 
 
@@ -126,7 +127,7 @@ app.use('/api/consultant-inscription', proxy(process.env.API_HOST, {
     logger.info(`Forwarding consultant inscription`);
     return '/api/v1/sg/consultant-inscription';
   },
-  userResDecorator: function (proxyRes, proxyResData, userReq, userRes) {
+  userResDecorator: function (proxyRes, proxyResData, _, _) {
     if (proxyRes.statusCode === 201) {
       logger.info(`Successfully created consultant inscription`);
       const dataString = proxyResData.toString('utf8');
@@ -368,62 +369,6 @@ const sendEmailConsultant = async (data) => {
     })
 }
 
-// const sendEmailConsultant = async (data) => {
-//   const id = data.id
-//   //make html body
-//   const html = makeHTML(data, true);
-//   //make attachments
-//   const documentList = ['documentIdentity', 'documentScolaryCertificate', 'documentRIB', 'documentVitaleCard', 'documentCVEC', 'documentResidencePermit']
-//   const attachments = []
-//   for (const documentName of documentList) {
-//     const url = `${process.env.API_HOST}/api/v1/sg/consultant-inscription/${id}/document/${documentName}`;
-//     const options = {
-//       url: url,
-//       headers: { Authorization: api_token },
-//       encoding: null
-//     };
-//     const callback = (error, response, body) => {
-//       if (!error && response.statusCode == 200) {
-//         let filename = documentName;
-//         let filesize = 0;
-//         try {
-//           const contentDispo = response.headers['content-disposition']
-//           const startIndex = contentDispo.indexOf("filename=") + 10;
-//           const endIndex = contentDispo.length - 1;
-//           const headerFilename = contentDispo.substring(startIndex, endIndex);
-//           if (headerFilename) filename += '.' + headerFilename.split('.')[1];
-//           const contentLength = response.headers['content-length']
-//           if (contentLength) filesize = Number(contentLength);
-//         } catch (e) {
-//           logger.error(`Error getting filename`);
-//           logger.error(e.message);
-//         }
-//         attachments.push({
-//           filename: filename,
-//           content: body,
-//           filesize: filesize
-//         })
-//       }
-//     }
-//     try {
-//       await rp(options, callback);
-//     } catch (e) {
-//       logger.info(`Warning : Error getting a file`);
-//     }
-
-//   }
-//   //make email
-//   const mailOptions = {
-//     from: email_auth.user,
-//     to: email_sg,
-//     subject: `Nouvelle Inscription - Consultant (ID - ${id})`,
-//     html: html,
-//     attachments: attachments
-//   }
-//   const emailSender = new EmailSender(process.env.EMAIL_PROVIDER, email_auth, logger);
-//   emailSender.sendEmail(mailOptions);
-// }
-
 const makeFicheInscription = async (id) => {
   const url = process.env.API_HOST + `/api/v1/sg/membre-inscription/${id}/document/1/generate`;
   try {
@@ -461,10 +406,34 @@ const addSignature = (id, originalPDF) => {
   const content = fs.readFileSync(newPDF);
   const attachments = [{ filename, filesize, content }]
   sendEmailMember(id, attachments)
+  uploadInscriptionForm(id, newPDF)
+}
+
+const uploadInscriptionForm = (id, signedPDF) => {
+  let formData = new FormData();
+  formData.append('file', fs.createReadStream(signedPDF), `fiche_inscription_membre_${id}.pdf`);
+  fetch((`${process.env.API_HOST}/api/v1/sg/membre-inscription/${id}/document/1`), {
+    method: 'POST',
+    headers: {
+      Authorization: api_token
+    },
+    body: formData
+  })
+    .then((res) => {
+      if (res.ok) {
+        logger.info(`Ficher d'inscription uploaded for member inscription ${id}`);
+      } else {
+        logger.error(`Ficher d'inscription not uploaded for member inscription ${id} : ${res.status}`);
+      }
+    })
+    .catch((error) => {
+      logger.error(`Ficher d'inscription not uploaded for member inscription ${id} : ${error}`);
+    })
 }
 
 const testFunction = () => {
-  prepareEmailMember(38)
+  //uploadInscriptionForm(3, './test.pdf')
+  prepareEmailMember(32);
 }
 
 /* Server */
@@ -476,5 +445,5 @@ app.listen(port, (req, res) => {
   setInterval(() => {
     loginKeros(refreshMeta);
   }, refreshInterval);
-  //setTimeout(testFunction, 200);
+  //setTimeout(testFunction, 1000);
 })
