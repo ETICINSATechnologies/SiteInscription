@@ -18,7 +18,7 @@ const Home = () => {
                         Devenir Membre Actif
                     </Button>
                 </Link>
-                <Link to="/consultant">
+                <Link to="/consultant-legacy">
                     <Button variant="primary" className="full-width" style={{ margin: '0.2rem auto 1rem auto' }}>
                         Devenir Consultant
                     </Button>

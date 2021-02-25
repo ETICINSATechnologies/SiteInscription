@@ -10,6 +10,7 @@ import Home from './views/home/home';
 import Inscription from './views/inscription/inscription';
 import Landing_Membre from './views/landing/landing_membre';
 import Landing_Consultant from './views/landing/landing_consultant';
+import HSInscription from './views/inscription/hsinscription';
 
 let consultantprops = {isConsultant : true};
 let memberprops = {isConsultant : false};
@@ -20,6 +21,9 @@ ReactDOM.render(
             <Switch>
                 <Route exact path='/' component={Home}/>
                 <Route exact path='/consultant' render={(routeProps) => (
+                    <HSInscription {...routeProps} {...consultantprops}/>
+                )}/>
+                <Route exact path='/consultant-legacy' render={(routeProps) => (
                     <Inscription {...routeProps} {...consultantprops} />
                 )}/>
                 <Route exact path='/member' render={(routeProps) => (
