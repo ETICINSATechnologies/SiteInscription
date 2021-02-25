@@ -16,4 +16,14 @@ exec:
 check:
 	./provisioning/check_environment.sh
 
+check-dev:
+	./provisioning/check_dev_environment.sh
+
+dev: check-dev
+	cd ./client && npm install
+	cd ./client && npm start
+
+dev-start:
+	cd ./client && npm start
+
 prod: down build up
