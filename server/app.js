@@ -78,17 +78,17 @@ app.get('/api/file/:filename', (req, res) => {
   });
 })
 
-app.get('/api/meta', (req, res) => {
+app.get('/api/meta', (_, res) => {
   res.send(keros_meta);
 })
 
 app.post('/api/membre-inscription/:id/signature', (req, res) => {
   logger.info(`Received signature from ${req.params.id}`)
   new formidable.IncomingForm().parse(req)
-    .on('fileBegin', (name, file) => {
+    .on('fileBegin', (_,file) => {
       file.path = __dirname + `/storage/signatures/${req.params.id}.png`
     })
-    .on('file', (name, file) => {
+    .on('file', (name,_) => {
       logger.info(`Uploaded ${name}`)
     })
     .on('aborted', () => {
@@ -101,6 +101,7 @@ app.post('/api/membre-inscription/:id/signature', (req, res) => {
     })
     .on('end', () => {
       res.end()
+      prepareEmailMember(req.params.id)
     })
 });
 
@@ -433,7 +434,7 @@ const uploadInscriptionForm = (id, signedPDF) => {
 
 const testFunction = () => {
   //uploadInscriptionForm(3, './test.pdf')
-  prepareEmailMember(32);
+  //prepareEmailMember(32);
 }
 
 /* Server */

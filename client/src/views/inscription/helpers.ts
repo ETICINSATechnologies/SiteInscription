@@ -76,7 +76,9 @@ export const handleSubmit = (event: React.FormEvent, person: PersonInterface, is
                                 }).then(res => {
                                     setIsUploading(false)
                                     if (res.ok) {
-                                        payment(member)
+                                        window.location.href = '/landing-member'
+                                    } else {
+                                        alert("Erreur lors du chargement de la signature");
                                     }
                                 })
                             })
@@ -92,24 +94,6 @@ export const handleSubmit = (event: React.FormEvent, person: PersonInterface, is
         }
     }
 }
-
-export const payment = (member: any) => {
-    let stripe = window.Stripe(process.env.REACT_APP_STRIPE_PK);
-    stripe
-        .redirectToCheckout({
-            items: [{ sku: process.env.REACT_APP_STRIPE_PRODUCT, quantity: 1 }],
-            successUrl: process.env.REACT_APP_SITE_URL + "/landing-member/",
-            cancelUrl: process.env.REACT_APP_SITE_URL,
-            clientReferenceId: member.id.toString(),
-            customerEmail: member.email
-        })
-        .then(function (result: any) {
-            // If `redirectToCheckout` fails due to a browser or network
-            // error, display the localized error message to your customer
-            // using `result.error.message`
-            result.error.message = 'Il y avait une erreur dans la redirection vers le paiement'
-        });
-};
 
 export const getData = async (url: string) => {
     const response = await fetch(url);
