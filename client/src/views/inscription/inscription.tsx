@@ -488,15 +488,9 @@ const Inscription = (props: interfaces.InscriptionProps) => {
   const renderSubmit = () => {
     return (
       <React.Fragment>
-        {
-          props.isConsultant ? null :
-            <div className='has-margin-top'>
-              <p>Une cotisation de 4 euros est demandée à chaque nouvel adhérent pour finaliser son inscription. Cette cotisation permet de contribuer à la vie quotidienne de l’association.</p>
-            </div>
-        }
         <div className="text-center">
           <Button variant="primary" type="submit">
-            {props.isConsultant ? "Valider et s'inscrire" : "Payer et s'inscrire"}
+            Valider et s'inscrire
           </Button>
         </div>
       </React.Fragment>
